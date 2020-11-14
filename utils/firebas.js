@@ -1,21 +1,14 @@
-//import * as firebase from 'firebase';
 import firebase from 'firebase/app'
-// Optionally import the services that you want to use
-//import "firebase/auth";
-//import "firebase/database";
-//import "firebase/firestore";
-//import "firebase/functions";
-//import "firebase/storage";
 
 // Initialize Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyArgDoMCcT_ig5d6_LCI1bRmh9tshXx_7k",
-    authDomain: "gosender-15ab3.firebaseapp.com",
-    databaseURL: "https://gosender-15ab3.firebaseio.com",
-    projectId: "gosender-15ab3",
-    storageBucket: "gosender-15ab3.appspot.com",
-    messagingSenderId: "736089699199",
-    appId: "1:736089699199:web:fc8f2e9e1dbfc7d57a604a"
+    apiKey: "AIzaSyCmHL3o-skzteoxIXOxgU1MN_qbMg7Yzwk",
+    authDomain: "tienda-2ac86.firebaseapp.com",
+    databaseURL: "https://tienda-2ac86.firebaseio.com",
+    projectId: "tienda-2ac86",
+    storageBucket: "tienda-2ac86.appspot.com",
+    messagingSenderId: "525265734942",
+    appId: "1:525265734942:web:74c1c5af5adbee24784d0f"
 };
 
 firebase.initializeApp(firebaseConfig);
