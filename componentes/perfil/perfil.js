@@ -8,9 +8,9 @@ import * as ImagePicker from 'expo-image-picker'
 import {View,Text,StyleSheet} from 'react-native'
 import {Avatar,Button} from 'react-native-elements'
 import {obtenerDatosUsuario} from '../../utils/acciones'
-import {cerrarsesion,ObtenerUsuario} from '../../utils/acciones'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
-
+import {cerrarsesion,ObtenerUsuario,actualizarRegistro} from '../../utils/acciones'
+                          
 import * as Font from 'expo-font'
 
 export default function Perfil () {
@@ -155,9 +155,13 @@ export default function Perfil () {
          }else{
             setFoto(result.uri)
             uploadImageStorage(result.uri)
-            .then(() => {
+            .then(async(response) => {
                //updatePhotoUrl();
-               console.log("subida")
+               let fotoPerfil = {
+                  foto:response[0],
+               }
+               const registro = await actualizarRegistro("users", usuario.uid, fotoPerfil)
+               setLoading(false)
             })
             .catch(() => {
                toastRef.current.show("Error al actualizar el avatar.");
@@ -167,13 +171,24 @@ export default function Perfil () {
    }
 
    const uploadImageStorage = async (uri) => {
-      setLoadingText("Actualizando Avatar");
-      setLoading(true);
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const ref = firebase.storage().ref().child(`avatar/${usuario.uid}`);
-      return ref.put(blob);
-   };
+      setLoadingText("Actualizando Avatar")
+      setLoading(true)
+      const imageBlob = []
+      const response = await fetch(uri)
+      const blob = await response.blob()
+      const ref = firebase.storage().ref().child(`avatar/${usuario.uid}`)
+      //return ref.put(blob)
+      await ref.put(blob).then(async (result) => {
+         await firebase
+         .storage()
+         .ref(`avatar/${result.metadata.name}`)
+         .getDownloadURL()
+         .then((photoUrl) => {
+            imageBlob.push(photoUrl)
+         })
+      })
+      return imageBlob
+   }
 
    return (
      <View style={styles.container}>
