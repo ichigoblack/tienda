@@ -1,7 +1,12 @@
 import Loading from '../loading'
+import * as firebase from 'firebase'
 import Toast from 'react-native-easy-toast'
 import React,{useRef,useState} from 'react'
-import {View,Text,Image,StyleSheet} from 'react-native'
+import AccountOptions from './AccountOptions'
+import * as Permissions from 'expo-permissions'
+import * as ImagePicker from 'expo-image-picker'
+import {View,Text,StyleSheet} from 'react-native'
+import {Avatar,Button} from 'react-native-elements'
 import {obtenerDatosUsuario} from '../../utils/acciones'
 import {cerrarsesion,ObtenerUsuario} from '../../utils/acciones'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
@@ -20,6 +25,7 @@ export default function Perfil () {
    const [loading, setLoading] = useState(false)
    const [fontsLoad, setFontsLoad] = useState(false)
    const [telefonoAuth, setTelefonoAuth] = useState(false)
+   const [loadingText, setLoadingText] = useState("Cargando")
 
    const photo={
       foto:require("../../assets/avatar.jpg")
@@ -102,7 +108,7 @@ export default function Perfil () {
                   {nombre}
                </Text>
             </View>
-            <Loading isVisible={loading} text="Cargando" />
+            <Loading isVisible={loading} text={loadingText} />
          </View>
       );
    }
@@ -110,8 +116,14 @@ export default function Perfil () {
    function HeaderAvatar(props) {
       const {imagenperfil,setimagenperfil} = props;
       return(
-        <View style={styles.avatarinline}>
-            <Image style={styles.imagen} source={imagenperfil? {uri:imagenperfil}:photo.foto}/> 
+         <View style={styles.avatarinline}>
+            <Avatar
+               rounded
+               size='large'
+               showAccessory
+               onPress={uploadImage}
+               source={imagenperfil? {uri:imagenperfil}:photo.foto}
+            />
         </View>
       )
    }
@@ -126,16 +138,54 @@ export default function Perfil () {
             {telefonoAuth == false &&
                (<Text style={styles.textOpcion} onPress={goConfirmar}>Autenticar Telefono</Text>)
             }
-            <Text style={styles.TextSalir} onPress={() => {cerrarsesion()}}>Cerrar Sesión</Text>
          </View>
       )
    }
+
+   const uploadImage = async () => {
+      const permissionResult = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+      if(permissionResult === "denied"){
+         toastRef.current.show("Es necesario aceptar los permisos de galeria, si lo has rechazado tienes que ir a ajustes y activarlos manualmente",3000)
+      }else{
+         const result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing:true,
+         })
+         if(result.cancelled){
+            toastRef.current.show("Has cerrado sin seleccionar ninguna imagen",2000)
+         }else{
+            setFoto(result.uri)
+            uploadImageStorage(result.uri)
+            .then(() => {
+               //updatePhotoUrl();
+               console.log("subida")
+            })
+            .catch(() => {
+               toastRef.current.show("Error al actualizar el avatar.");
+            });
+        }  
+      }
+   }
+
+   const uploadImageStorage = async (uri) => {
+      setLoadingText("Actualizando Avatar");
+      setLoading(true);
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const ref = firebase.storage().ref().child(`avatar/${usuario.uid}`);
+      return ref.put(blob);
+   };
 
    return (
      <View style={styles.container}>
          <CabeceraBG nombre={nombre}/>
          <HeaderAvatar imagenperfil={foto} setimagenperfil={setFoto}/>
-         <Opciones/>
+         <AccountOptions user={usuario} userInfo={inf} toastRef={toastRef}/>
+         <Button
+            title="Cerrar sesión"
+            onPress={() => {cerrarsesion()}}
+            buttonStyle={styles.btnCloseSession}
+            titleStyle={styles.btnCloseSessionText}
+         />
          <Toast ref={toastRef} position='center' opacity={0.9} style={{backgroundColor:'#28872A'}}/>
      </View>
    )
@@ -148,6 +198,7 @@ const styles = StyleSheet.create({
    },
    avatarinline: {
       marginTop: -70,
+      marginBottom: 40,
       flexDirection: "row",
       justifyContent: "space-around",
    },
@@ -188,5 +239,25 @@ const styles = StyleSheet.create({
       color: "#128C7E",
       marginBottom: 20,
       fontFamily:'Oxygen'
-   }
+   },
+   btnCloseSession: {
+      marginTop: 30,
+      paddingTop: 10,
+      borderRadius: 0,
+      marginBottom: 40,
+      borderTopWidth: 1,
+      paddingBottom: 10,
+      borderBottomWidth: 1,
+      backgroundColor: "#fff",
+      borderTopColor: "#e3e3e3",
+      borderBottomColor: "#e3e3e3",
+  },
+  btnCloseSessionText: {
+      color: "#00a680",
+  },
 })
+/*
+ <Image style={styles.imagen} source={imagenperfil? {uri:imagenperfil}:photo.foto}/> 
+
+      
+      */
