@@ -1,41 +1,54 @@
 import React,{useState} from 'react'
-import * as firebase from 'firebase'
 import {View,StyleSheet} from 'react-native'
 import {Icon,Input,Button} from 'react-native-elements'
+import {actualizarRegistro} from '../../utils/acciones'
 
 export default function ChangeDisplayNameForm(props) {
 
-  const {displayName,direccion,setShowModal,toastRef,setRealoadUserInfo} = props
+  const {
+      user,
+      direccion,
+      setLoading,
+      displayName,
+      setShowModal,
+      setReloadUser,
+      setLoadingText,} = props
   
-  const [error, setError] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [newDireccion, setNewDireccion] = useState(null)
-  const [newDisplayName, setNewDisplayName] = useState(null)
+  const [errorDi, setErrorDi] = useState(null)
+  const [errorNa, setErrorNa] = useState(null)
+  const [newDireccion, setNewDireccion] = useState(direccion)
+  const [newDisplayName, setNewDisplayName] = useState(displayName)
 
-   const onSubmit = () => {
-      setError(null);
-      if (!newDisplayName || !newDireccion) {
-         setError("No puede estar vacio los datos")
-      } else {
-         setIsLoading(true)
-         const update = {
-            displayName: newDisplayName,
+   const onSubmit = async() => {
+      setErrorDi(null)
+      setErrorNa(null)
+      if (!newDireccion  || !newDisplayName) {
+         if(!newDisplayName){
+            setErrorNa("Debe llenar el nombre")
          }
-         firebase
-         .auth()
-            .currentUser.updateProfile(update)
-         .then(() => {
-            setIsLoading(false)
-            setRealoadUserInfo(true)
-            setShowModal(false)
-         })
-         .catch(() => {
-            setError("Error al actualizar el nombre.")
-            setIsLoading(false)
-         })
+         if(!newDireccion){
+            setErrorDi("Debe llenar la direccion")
+         } 
+      }else{
+         setLoadingText("Actualizando datos")
+         setLoading(true)
+         let datos = {
+            nombre:newDisplayName,
+            direccion:newDireccion,
+         }
+         const registro = await actualizarRegistro("users", user.uid, datos)
+            .then(() => {
+               setLoading(false)
+               setReloadUser(true)
+               setShowModal(false)
+            })
+            .catch(() => {
+               setErrorNa("Error al actualizar el nombre.")
+               setErrorDi("Error al actualizar la direccion.")
+               setLoading(false)
+            })
       }
    }
-
    return (
       <View style={styles.view}>
          <Input
@@ -48,7 +61,7 @@ export default function ChangeDisplayNameForm(props) {
             }}
             defaultValue={displayName || ""}
             onChange={(e) => setNewDisplayName(e.nativeEvent.text)}
-            errorMessage={error}
+            errorMessage={errorNa}
          />
          <Input
             placeholder="Direccion"
@@ -56,14 +69,14 @@ export default function ChangeDisplayNameForm(props) {
             rightIcon={<Icon color='#128c7e' name='directions' type='SimpleLineIcons'/>}
             defaultValue={direccion || ""}
             onChange={(e) => setNewDireccion(e.nativeEvent.text)}
-            errorMessage={error}
+            errorMessage={errorDi}
          />
          <Button
             title="Cambiar Datos"
             containerStyle={styles.btnContainer}
             buttonStyle={styles.btn}
             onPress={onSubmit}
-            loading={isLoading}
+            //loading={isLoading}
          />
       </View>
    )

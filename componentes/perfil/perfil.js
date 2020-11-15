@@ -1,14 +1,14 @@
 import Loading from '../loading'
 import * as firebase from 'firebase'
 import Toast from 'react-native-easy-toast'
-import React,{useRef,useState} from 'react'
 import AccountOptions from './AccountOptions'
 import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
 import {View,Text,StyleSheet} from 'react-native'
 import {Avatar,Button} from 'react-native-elements'
+import React,{useRef,useEffect,useState} from 'react'
+import {useNavigation} from '@react-navigation/native'
 import {obtenerDatosUsuario} from '../../utils/acciones'
-import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {cerrarsesion,ObtenerUsuario,actualizarRegistro} from '../../utils/acciones'
                           
 import * as Font from 'expo-font'
@@ -24,7 +24,7 @@ export default function Perfil () {
    const [nombre, setNombre] = useState("")
    const [loading, setLoading] = useState(false)
    const [fontsLoad, setFontsLoad] = useState(false)
-   const [telefonoAuth, setTelefonoAuth] = useState(false)
+   const [reloadUser, setReloadUser] = useState(false)
    const [loadingText, setLoadingText] = useState("Cargando")
 
    const photo={
@@ -46,10 +46,10 @@ export default function Perfil () {
       navigation.navigate('Enviar',{ numero: numero })
    }
 
-   /*useEffect(() => {
+   useEffect(() => {
       (async () => {
          try{
-            loading
+            setLoading(true)
             if(!fontsLoad){
                loadFonts()
             }
@@ -57,43 +57,19 @@ export default function Perfil () {
             setInf(info)
             setFoto(info.foto)
             setNombre(info.nombre)
-            setTelefonoAuth(info.telefonoAuth)
             setLoading(false)
          }catch(err){
            toastRef.current.show(error,2000)
          }
-       })();
-   },[loading])*/
+      })()
+      setReloadUser(false)
+   },[reloadUser])
 
-   useFocusEffect(
-      React.useCallback(() => {
-         (async () => {
-            setLoading(true)
-            console.log('Screen was focused')
-            try{
-               if(!fontsLoad){
-                  loadFonts()
-               }
-               info = await obtenerDatosUsuario(usuario.uid)
-               setInf(info)
-               setFoto(info.foto)
-               setNombre(info.nombre)
-               setTelefonoAuth(info.telefonoAuth)
-               setLoading(false)
-            }catch(err){
-              toastRef.current.show(error,2000)
-            }
-          })();
-         return () => {
-            console.log('Screen was unfocused')
-         }
-      }, [])
-   )
-
+   
    const loadFonts = async () =>{
       await Font.loadAsync({
-        // Andala: require('../../assets/fonts/Andala-Script.ttf'),
-        // Lobster: require('../../assets/fonts/Lobster-Regular.ttf'),
+         Andala: require('../../assets/fonts/Andala-Script.ttf'),
+         Lobster: require('../../assets/fonts/Lobster-Regular.ttf'),
          Oxygen: require('../../assets/fonts/Oxygen-Regular.ttf'),
       })
       setFontsLoad(true)
@@ -114,31 +90,17 @@ export default function Perfil () {
    }
 
    function HeaderAvatar(props) {
-      const {imagenperfil,setimagenperfil} = props;
+      const {imagenperfil} = props;
       return(
          <View style={styles.avatarinline}>
             <Avatar
                rounded
-               size='large'
+               size='xlarge'
                showAccessory
                onPress={uploadImage}
                source={imagenperfil? {uri:imagenperfil}:photo.foto}
             />
         </View>
-      )
-   }
-
-   function Opciones(){
-      return (
-         <View style={styles.botones}>
-            <Text style={styles.textOpcion} onPress={goEditar}>Editar perfil</Text>
-            {telefonoAuth == true &&
-               (<Text style={styles.textOpcion} onPress={goActualizar}>Actualizar Telefono</Text>)
-            }
-            {telefonoAuth == false &&
-               (<Text style={styles.textOpcion} onPress={goConfirmar}>Autenticar Telefono</Text>)
-            }
-         </View>
       )
    }
 
@@ -156,7 +118,6 @@ export default function Perfil () {
             setFoto(result.uri)
             uploadImageStorage(result.uri)
             .then(async(response) => {
-               //updatePhotoUrl();
                let fotoPerfil = {
                   foto:response[0],
                }
@@ -177,7 +138,6 @@ export default function Perfil () {
       const response = await fetch(uri)
       const blob = await response.blob()
       const ref = firebase.storage().ref().child(`avatar/${usuario.uid}`)
-      //return ref.put(blob)
       await ref.put(blob).then(async (result) => {
          await firebase
          .storage()
@@ -193,14 +153,9 @@ export default function Perfil () {
    return (
      <View style={styles.container}>
          <CabeceraBG nombre={nombre}/>
-         <HeaderAvatar imagenperfil={foto} setimagenperfil={setFoto}/>
-         <AccountOptions user={usuario} userInfo={inf} toastRef={toastRef}/>
-         <Button
-            title="Cerrar sesión"
-            onPress={() => {cerrarsesion()}}
-            buttonStyle={styles.btnCloseSession}
-            titleStyle={styles.btnCloseSessionText}
-         />
+         <HeaderAvatar imagenperfil={foto}/>
+         <AccountOptions user={usuario} userInfo={inf} toastRef={toastRef} setReloadUser={setReloadUser}/>
+         <Button title="Cerrar sesión" onPress={() => {cerrarsesion()}} buttonStyle={styles.btnCloseSession} titleStyle={styles.btnCloseSessionText}/>
          <Toast ref={toastRef} position='center' opacity={0.9} style={{backgroundColor:'#28872A'}}/>
      </View>
    )
@@ -236,7 +191,7 @@ const styles = StyleSheet.create({
       justifyContent:'flex-end',
    },
    textCabezera: {
-      fontSize: 18, 
+      fontSize: 26, 
       color: "#fff", 
       fontWeight: "bold"
    },

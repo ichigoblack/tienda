@@ -281,3 +281,27 @@ const styles = StyleSheet.create({
    },
 })
 // <StatusBar barStyle = "dark-content" hidden = {false} backgroundColor = "#00BCD4" translucent = {true}/>
+/*useFocusEffect(
+      React.useCallback(() => {
+         (async () => {
+            setLoading(true)
+            console.log('Screen was focused')
+            try{
+               if(!fontsLoad){
+                  loadFonts()
+               }
+               info = await obtenerDatosUsuario(usuario.uid)
+               setInf(info)
+               setFoto(info.foto)
+               setNombre(info.nombre)
+               setTelefonoAuth(info.telefonoAuth)
+               setLoading(false)
+            }catch(err){
+              toastRef.current.show(error,2000)
+            }
+          })();
+         return () => {
+            console.log('Screen was unfocused')
+         }
+      }, [])
+   )*/

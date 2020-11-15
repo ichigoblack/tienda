@@ -1,13 +1,18 @@
 import {map} from 'lodash'
 import Modal from '../Modal'
+import Loading from '../loading'
 import React,{useState} from 'react'
 import {Text,View,StyleSheet} from 'react-native'
 import {ListItem} from 'react-native-elements'
+import ChangeEmailForm from './ChangeEmailForm'
 import ChangeDisplayNameForm from './editarPerfil'
+import ChangePasswordForm from './ChangePasswordForm'
 
 export default function AccountOptions(props) {
   
-    const {user,userInfo,toastRef} = props
+    const {user,userInfo,toastRef,setReloadUser} = props
+    const [loading, setLoading] = useState(false)
+    const [loadingText, setLoadingText] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [renderComponent, setRenderComponent] = useState(null)
 
@@ -16,18 +21,24 @@ export default function AccountOptions(props) {
         case "datos":
           setRenderComponent(
             <ChangeDisplayNameForm
-              toastRef={toastRef}
-              setRealoadUserInfo={false}
+              user={user}
+              setLoading={setLoading}
               setShowModal={setShowModal}
               displayName={userInfo.nombre}
+              setReloadUser={setReloadUser}
               direccion={userInfo.direccion}
+              setLoadingText={setLoadingText}
             />
           )
           setShowModal(true)
         break
         case "correo":
           setRenderComponent(
-            <Text>datos</Text>
+            <ChangeEmailForm
+              email={user.email}
+              toastRef={toastRef}
+              setShowModal={setShowModal}
+            />
           )
           setShowModal(true)
         break
@@ -39,7 +50,7 @@ export default function AccountOptions(props) {
         break
         case "contraseña":
           setRenderComponent(
-            <Text>contraseña</Text>
+            <ChangePasswordForm setShowModal={setShowModal}/>
           )
           setShowModal(true)
         break
@@ -77,6 +88,7 @@ export default function AccountOptions(props) {
                 {renderComponent}
               </Modal>
             )}
+            <Loading isVisible={loading} text={loadingText} />
         </View>
     )
 }
