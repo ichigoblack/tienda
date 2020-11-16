@@ -1,10 +1,11 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableHighlight } from "react-native";
-import { Icon } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react'
+import {Icon} from 'react-native-elements'
+import {useNavigation} from '@react-navigation/native'
+import {StyleSheet,TouchableHighlight} from 'react-native'
 
 export default function ShopButton() {
-  const navigation = useNavigation();
+  
+  const navigation = useNavigation()
 
   return (
     <TouchableHighlight
@@ -15,7 +16,7 @@ export default function ShopButton() {
     >
       <Icon name="store" color="#fff" size={30} />
     </TouchableHighlight>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -34,4 +35,4 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
     padding: 20,
   },
-});
+})

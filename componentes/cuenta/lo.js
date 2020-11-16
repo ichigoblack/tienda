@@ -286,3 +286,132 @@ const loginFacbook = async () => {
             toastRef.current.show("Error desconocido, intentelo más tarde");
         }
     } */
+
+
+    /*import React from 'react'
+import CustomTab from '../CustomTab'
+import {Icon} from 'react-native-elements'
+import {View,StyleSheet} from 'react-native'
+import {Ionicons} from '@expo/vector-icons'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+
+
+import Perfil from "../perfil/perfil"
+
+const Tab = createBottomTabNavigator();
+
+export default function Interna(){
+    return (
+        <Tab.Navigator
+            initialRouteName="Imbox"
+            tabBarOptions={{
+                activeTintColor: "#fff",
+                activeBackgroundColor: "#feb72b",
+                inactiveTintColor: "gray"
+            }}
+            tabBar={props => <CustomTab {...props} />}
+        >
+            <Tab.Screen
+                name="Home"
+                component={Perfil}
+                options={{
+                    title: "Inicio",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-home" size={size} color={color} />
+                    )
+                }}
+            />
+            <Tab.Screen
+                name="Imbox"
+                component={Perfil}
+                options={{
+                    title: "Mensajes",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-chatboxes" size={size} color={color} />
+                    )
+                }}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={Perfil}
+                    options={{
+                    title: "Perfil",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-contact" size={size} color={color} />
+                    )
+                }}
+            />
+            <Tab.Screen
+                name="Casa"
+                component={Perfil}
+                options={{
+                    title: "Inicio",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-home" size={size} color={color} />
+                    )
+                }}
+            />
+            <Tab.Screen
+                name="Mensaje"
+                component={Perfil}
+                options={{
+                    title: "Mensajes",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-chatboxes" size={size} color={color} />
+                    )
+                }}
+            />
+        </Tab.Navigator>
+    )
+}
+
+function screenOptions(route , color){
+    let iconName;
+    
+    switch (route.name){
+        case "Perfil":
+            iconName = "user";
+            color = "black";
+            break;
+        case "Perfil2":
+            iconName = "user";
+            color = "black";
+            break;
+        case "Perfil5":
+            iconName = "user";
+            color = "black";
+            break;
+        default:
+            break;
+    }
+    return(
+        <Icon type="font-awesome-5" name={iconName} size={22} color={color}/>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        position: 'relative',
+        width: 75,
+        alignItems: 'center'
+      },
+})*/
+
+
+/*
+<NavigationContainer>
+      <Drawer.Navigator
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      >
+        <Drawer.Screen
+          name="Tienda"
+          component={TabBar}
+          options={{
+            title: "Tienda",
+            drawerIcon: () => {
+              <Icon type="material-community" name="store" size={24} />;
+            },
+          }}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer> */
