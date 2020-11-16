@@ -13,15 +13,15 @@ export default function ChangePhoneForm(props) {
 
     const inputphone = useRef()
     const recaptchaVerifier = useRef()
-    const [phone, setphone] = useState("")
     const [error, setError] = useState(null)
     const [country, setcountry] = useState("EC")
     const [codigoVal, setCodigoVal] = useState(false)
     const [validador, setValidador] = useState(false)
+    const [phone, setphone] = useState(datos.telefono)
     const [phoneNumber, setphoneNumber] = useState("")
-    const [callingCode, setcallingcode] = useState("593")
     const [textA, setTextA] = useState("Agregar Telefono")
     const [textB, setTextB] = useState("Cambiar Telefono")
+    const [callingCode, setcallingcode] = useState(datos.codigo)
     const [isLoading, setIsLoading] = useState(datos.telefonoAuth)
 
     const onSubmit = () => {

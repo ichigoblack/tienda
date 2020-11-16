@@ -67,8 +67,8 @@ export default function AccountOptions(props) {
         break
       }
     }
-    ///const textTelefono = userInfo.telefonoAuth ? "Agregar" : "Cambiar"
-    const menuOptions = generateOptions(selectedComponent,textTelefono)
+    
+    const menuOptions = generateOptions(selectedComponent)
 
     return(
         <View>
@@ -100,10 +100,10 @@ export default function AccountOptions(props) {
     )
 }
 
-function generateOptions(selectedComponent,textTelefono){
+function generateOptions(selectedComponent){
     return [
         {
-            title: "Cambiar datos",
+            title: "Datos",
             iconType: "material-community",
             iconNameLeft: "account-circle",
             iconColorLeft: "#128c7e",
@@ -112,7 +112,7 @@ function generateOptions(selectedComponent,textTelefono){
             onPress: () => selectedComponent("datos")
         },
         {
-            title: "Cambiar correo",
+            title: "Correo",
             iconType: "material-community",
             iconNameLeft: "email",
             iconColorLeft: "#128c7e",
@@ -121,7 +121,7 @@ function generateOptions(selectedComponent,textTelefono){
             onPress: () => selectedComponent("correo")
         },
         {
-            title: `${textTelefono} telefono`,
+            title: "Telefono",
             iconType: "material-community",
             iconNameLeft: "cellphone",
             iconColorLeft: "#128c7e",
@@ -130,7 +130,7 @@ function generateOptions(selectedComponent,textTelefono){
             onPress: () => selectedComponent("telefono")
         },
         {
-            title: "Cambiar contraseña",
+            title: "Contraseña",
             iconType: "material-community",
             iconNameLeft: "lock",
             iconColorLeft: "#128c7e",
