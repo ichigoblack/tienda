@@ -2,6 +2,7 @@ import Loading from '../loading'
 import * as firebase from 'firebase'
 import Toast from 'react-native-easy-toast'
 import AccountOptions from './AccountOptions'
+import {FontAwesome5} from '@expo/vector-icons'
 import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
 import {View,Text,StyleSheet} from 'react-native'
@@ -29,21 +30,6 @@ export default function Perfil () {
 
    const photo={
       foto:require("../../assets/avatar.jpg")
-   }
-
-   const goEditar=()=>{
-      navigation.navigate('Editar',{ loading: true })
-   }
-
-   const goActualizar=()=>{
-      navigation.navigate('Actualizar')
-   }
-
-   const goConfirmar=()=>{
-      const ce = inf.codigo
-      const ne = inf.telefono
-      const numero = `+${ce}${ne}`
-      navigation.navigate('Enviar',{ numero: numero })
    }
 
    useEffect(() => {
@@ -76,7 +62,7 @@ export default function Perfil () {
    }
 
    function CabeceraBG(props) {
-      const {nombre} = props;
+      const {nombre} = props
       return (
          <View>
             <View style={styles.bg}>
@@ -86,11 +72,11 @@ export default function Perfil () {
             </View>
             <Loading isVisible={loading} text={loadingText} />
          </View>
-      );
+      )
    }
 
    function HeaderAvatar(props) {
-      const {imagenperfil} = props;
+      const {imagenperfil} = props
       return(
          <View style={styles.avatarinline}>
             <Avatar
@@ -125,8 +111,8 @@ export default function Perfil () {
                setLoading(false)
             })
             .catch(() => {
-               toastRef.current.show("Error al actualizar el avatar.");
-            });
+               toastRef.current.show("Error al actualizar el avatar.")
+            })
         }  
       }
    }
@@ -154,8 +140,14 @@ export default function Perfil () {
      <View style={styles.container}>
          <CabeceraBG nombre={nombre}/>
          <HeaderAvatar imagenperfil={foto}/>
-         <AccountOptions user={usuario} userInfo={inf} toastRef={toastRef} setReloadUser={setReloadUser}/>
-         <Button title="Cerrar sesión" onPress={() => {cerrarsesion()}} buttonStyle={styles.btnCloseSession} titleStyle={styles.btnCloseSessionText}/>
+         <AccountOptions user={usuario} userInfo={inf} toastRef={toastRef} setReloadUser={setReloadUser} />
+         <Button
+            icon={<FontAwesome5 name="door-open" size={24} color="#128c7e" />}
+            iconRight
+            title="Cerrar sesión " 
+            onPress={() => {cerrarsesion()}} 
+            buttonStyle={styles.btnCloseSession} 
+            titleStyle={styles.btnCloseSessionText}/>
          <Toast ref={toastRef} position='center' opacity={0.9} style={{backgroundColor:'#28872A'}}/>
      </View>
    )
@@ -226,8 +218,3 @@ const styles = StyleSheet.create({
       color: "#00a680",
   },
 })
-/*
- <Image style={styles.imagen} source={imagenperfil? {uri:imagenperfil}:photo.foto}/> 
-
-      
-      */

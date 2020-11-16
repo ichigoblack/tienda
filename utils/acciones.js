@@ -64,15 +64,30 @@ export const enviarconfirmacionphone = async (numero, recapcha) => {
     .catch((err) => console.log(err));
 
   return verificationid;
-};
+}
+
+export const reConfirmarcodigo = async (verificationid, codigo) => {
+  let resultado = false;
+  const credenciales = firebase.auth.PhoneAuthProvider.credential(
+    verificationid,
+    codigo
+  )
+  await firebase
+    .auth()
+    .currentUser.updatePhoneNumber(credenciales)
+    .then((response) => (resultado = true))
+    .catch((err) => {
+      console.log(err);
+    })
+  return resultado;
+}
 
 export const confirmarcodigo = async (verificationid, codigo) => {
   let resultado = false;
   const credenciales = firebase.auth.PhoneAuthProvider.credential(
     verificationid,
     codigo
-  );
-
+  )
   await firebase
     .auth()
     .currentUser.linkWithCredential(credenciales)
@@ -82,7 +97,7 @@ export const confirmarcodigo = async (verificationid, codigo) => {
     });
 
   return resultado;
-};
+}
 
 export const obtenerToken = async () => {
   let token = "";

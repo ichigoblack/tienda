@@ -2,9 +2,10 @@ import {map} from 'lodash'
 import Modal from '../Modal'
 import Loading from '../loading'
 import React,{useState} from 'react'
-import {Text,View,StyleSheet} from 'react-native'
+import {View,StyleSheet} from 'react-native'
 import {ListItem} from 'react-native-elements'
 import ChangeEmailForm from './ChangeEmailForm'
+import ChangePhoneForm from './ChangePhoneForm'
 import ChangeDisplayNameForm from './editarPerfil'
 import ChangePasswordForm from './ChangePasswordForm'
 
@@ -12,8 +13,8 @@ export default function AccountOptions(props) {
   
     const {user,userInfo,toastRef,setReloadUser} = props
     const [loading, setLoading] = useState(false)
-    const [loadingText, setLoadingText] = useState(false)
     const [showModal, setShowModal] = useState(false)
+    const [loadingText, setLoadingText] = useState(false)
     const [renderComponent, setRenderComponent] = useState(null)
 
     const selectedComponent = (key) =>{
@@ -44,7 +45,13 @@ export default function AccountOptions(props) {
         break
         case "telefono":
           setRenderComponent(
-            <Text>telefono</Text>
+            <ChangePhoneForm
+              user={user}
+              datos={userInfo}
+              toastRef={toastRef}
+              setShowModal={setShowModal}
+              setReloadUser={setReloadUser}
+            />
           )
           setShowModal(true)
         break
@@ -60,8 +67,8 @@ export default function AccountOptions(props) {
         break
       }
     }
-
-    const menuOptions = generateOptions(selectedComponent)
+    ///const textTelefono = userInfo.telefonoAuth ? "Agregar" : "Cambiar"
+    const menuOptions = generateOptions(selectedComponent,textTelefono)
 
     return(
         <View>
@@ -93,42 +100,42 @@ export default function AccountOptions(props) {
     )
 }
 
-function generateOptions(selectedComponent){
+function generateOptions(selectedComponent,textTelefono){
     return [
         {
             title: "Cambiar datos",
             iconType: "material-community",
             iconNameLeft: "account-circle",
-            iconColorLeft: "#ccc",
+            iconColorLeft: "#128c7e",
             iconNameRight: "chevron-right",
-            iconColorRight: "#ccc",
+            iconColorRight: "#128c7e",
             onPress: () => selectedComponent("datos")
         },
         {
             title: "Cambiar correo",
             iconType: "material-community",
             iconNameLeft: "email",
-            iconColorLeft: "#ccc",
+            iconColorLeft: "#128c7e",
             iconNameRight: "chevron-right",
-            iconColorRight: "#ccc",
+            iconColorRight: "#128c7e",
             onPress: () => selectedComponent("correo")
         },
         {
-            title: "Cambiar telefono",
+            title: `${textTelefono} telefono`,
             iconType: "material-community",
             iconNameLeft: "cellphone",
-            iconColorLeft: "#ccc",
+            iconColorLeft: "#128c7e",
             iconNameRight: "chevron-right",
-            iconColorRight: "#ccc",
+            iconColorRight: "#128c7e",
             onPress: () => selectedComponent("telefono")
         },
         {
             title: "Cambiar contraseña",
             iconType: "material-community",
             iconNameLeft: "lock",
-            iconColorLeft: "#ccc",
+            iconColorLeft: "#128c7e",
             iconNameRight: "chevron-right",
-            iconColorRight: "#ccc",
+            iconColorRight: "#128c7e",
             onPress: () => selectedComponent("contraseña")
         },
     ]
