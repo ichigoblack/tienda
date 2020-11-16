@@ -4,9 +4,9 @@ import {Icon} from 'react-native-elements'
 import {createDrawerNavigator} from '@react-navigation/drawer'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 
-import MiTienda from "../perfil/com"
-import TiendaStack from "../perfil/com"
-import PerfilStack from "../navegacion/perfilStack"
+import TiendaStack from '../perfil/com'
+import MiTienda from './tiendaStack'
+import PerfilStack from '../navegacion/perfilStack'
 
 const Tab = createBottomTabNavigator()
 const Drawer = createDrawerNavigator()
