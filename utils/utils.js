@@ -22,7 +22,7 @@ export const cargarImagenesxAspecto = async (array) => {
   } else {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: array,
+      //aspect: array,
     });
 
     if (!result.cancelled) {

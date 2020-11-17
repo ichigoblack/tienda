@@ -2,7 +2,7 @@ import React from 'react'
 import {createStackNavigator} from '@react-navigation/stack'
 
 import MiTienda from '../tienda/mitienda'
-import AddProduct from '../tienda/mitienda'
+import AddProduct from '../tienda/agregarProducto'
 import EditarProducto from '../tienda/mitienda'
 
 const Stack = createStackNavigator();
@@ -11,8 +11,9 @@ export default function MiTiendaStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: "#128C7E" },
         headerTintColor: "#fff",
+        headerTitleAlign: 'center',
+        headerStyle: {backgroundColor: "#128C7E"},
       }}
     >
       <Stack.Screen
@@ -20,6 +21,7 @@ export default function MiTiendaStack() {
         name="mitienda"
         options={{
           title: "Mi Tienda",
+          headerLeft:null,
         }}
       />
       <Stack.Screen
