@@ -234,9 +234,9 @@ export const ListarMisProductos = async () => {
   let productos = [];
 
   await db
-    .collection("Productos")
+    .collection("productos")
     .where("usuario", "==", ObtenerUsuario().uid)
-    .where("status", "==", 1)
+    //.where("status", "==", 1)
     .get()
     .then((response) => {
       response.forEach((doc) => {
@@ -316,7 +316,7 @@ export const ListarProductos = async () => {
   let index = 0;
 
   await db
-    .collection("Productos")
+    .collection("productos")
     .where("status", "==", 1)
     .get()
     .then((response) => {
@@ -342,7 +342,7 @@ export const listarProductosxCategoria = async (categoria) => {
   let index = 0;
 
   await db
-    .collection("Productos")
+    .collection("productos")
     .where("status", "==", 1)
     .where("categoria", "==", categoria)
     .get()
