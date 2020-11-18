@@ -159,7 +159,7 @@ function Producto(props) {
                                     style: "default",
                                     text: "Confirmar",
                                     onPress: async () => {
-                                        await eliminarProducto("Productos", id);
+                                        await eliminarProducto("productos", id);
                                         setproductos(await ListarMisProductos());
                                     },
                                 },{

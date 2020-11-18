@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack'
 
 import MiTienda from '../tienda/mitienda'
 import AddProduct from '../tienda/agregarProducto'
-import EditarProducto from '../tienda/mitienda'
+import EditarProducto from '../tienda/editarProducto'
 
 const Stack = createStackNavigator();
 
