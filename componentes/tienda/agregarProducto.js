@@ -5,11 +5,13 @@ import React,{useRef,useState,useReducer} from 'react'
 import {cargarImagenesxAspecto} from '../../utils/utils'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Icon,Image,Input,Avatar,Button,AirbnbRating} from 'react-native-elements'
+import {addRegistro,ObtenerUsuario,subirImagenesBatch} from '../../utils/acciones'
 import {Alert,Text,View,ScrollView,StyleSheet,TouchableOpacity} from 'react-native'
 
 export default function agregarProducto(){
     
     const btnref = useRef()
+    const navigation = useNavigation()
     const [rating, setrating] = useState(5)
     const [titulo, settitulo] = useState("")
     const [precio, setprecio] = useState(0.0)
@@ -19,6 +21,7 @@ export default function agregarProducto(){
     const [categoria, setcategoria] = useState("")
     const [descripcion, setdescripcion] = useState("")
 
+     
     const addProducto = async () => {
         seterrores({})
         if (isEmpty(titulo)) {
@@ -46,7 +49,42 @@ export default function agregarProducto(){
                 }]
             )
         }else{
-            console.log("vamos bien")
+            setloading(true)
+            const urlimagenes = await subirImagenesBatch(imagenes,"productos")
+            const producto = {
+                precio,
+                rating,
+                titulo,
+                status: 1,
+                categoria,
+                descripcion,
+                imagenes: urlimagenes,
+                fechacreacion: new Date(),
+                usuario: ObtenerUsuario().uid,
+            }
+            const registrarproducto = await addRegistro("productos", producto)
+            if (registrarproducto.statusreponse) {
+                setloading(false);
+                Alert.alert(
+                    "Registro Exitoso",
+                    "El producto se ha registrado correctamente",
+                    [{
+                        style: "cancel",
+                        text: "Aceptar",
+                            onPress: () => navigation.navigate("mitienda"),
+                    }]
+                )
+              } else {
+                setloading(false);
+                Alert.alert(
+                    "Registro Fallido",
+                    "Ha ocurrido un error al registrar producto",
+                    [{
+                        style: "cancel",
+                        text: "Aceptar",
+                    }]
+                )
+            }
         }
     }
     
