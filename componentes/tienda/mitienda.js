@@ -2,7 +2,7 @@ import {Icon} from 'react-native-elements'
 import React, {useState,useEffect,useCallback} from 'react'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {Alert,Text,View,Image,FlatList,StyleSheet} from 'react-native'
-import {eliminarProducto,actualizarRegistro,ListarMisProductos} from '../../utils/acciones'
+import {eliminarImagenes,eliminarProducto,actualizarRegistro,ListarMisProductos} from '../../utils/acciones'
 
 export default function Mitienda(){
 
@@ -61,9 +61,8 @@ export default function Mitienda(){
 }
 
 function Producto(props) {
-    const {producto,navigation,setproductos} = props;
-    const {id,status,precio,titulo,imagenes,descripcion} = producto.item;
-    console.log("status",status)
+    const {producto,navigation,setproductos} = props
+    const {id,status,precio,titulo,imagenes,descripcion} = producto.item
     return (
         <View style={styles.containerProductos}>
             <Image
@@ -141,7 +140,7 @@ function Producto(props) {
                         style={styles.iconedit}
                         type="material-community"
                         onPress={() => {
-                            navigation.navigate("edit-product", { id });
+                            navigation.navigate("edit-product", { id })
                         }}
                     />
                 </View>
@@ -159,8 +158,9 @@ function Producto(props) {
                                     style: "default",
                                     text: "Confirmar",
                                     onPress: async () => {
-                                        await eliminarProducto("productos", id);
-                                        setproductos(await ListarMisProductos());
+                                        await eliminarProducto("productos", id)
+                                        await eliminarImagenes("productos", imagenes)
+                                        setproductos(await ListarMisProductos())
                                     },
                                 },{
                                     style: "default",

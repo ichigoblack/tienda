@@ -2,10 +2,11 @@ import {map,size,filter,isEmpty} from 'lodash'
 import Loading from '../../componentes/loading'
 import {useNavigation} from '@react-navigation/native'
 import React, {useRef,useState,useEffect} from 'react'
+import {cargarImagenesxAspecto} from '../../utils/utils'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Icon,Image,Input,Avatar,Button,AirbnbRating} from 'react-native-elements'
 import {Text,View,Alert,ScrollView,StyleSheet,TouchableOpacity} from 'react-native'
-import {ObtenerUsuario,subirImagenesBatch,actualizarRegistro,obternerRegistroxID,cargarImagenesxAspecto} from '../../utils/acciones'
+import {ObtenerUsuario,subirImagenesBatch,actualizarRegistro,obternerRegistroxID} from '../../utils/acciones'
 
 export default function EditarProducto(props) {
 
@@ -15,7 +16,7 @@ export default function EditarProducto(props) {
     const navigation = useNavigation()
     const [rating, setrating] = useState(5)
     const [titulo, settitulo] = useState("")
-    const [precio, setprecio] = useState(0.0)
+    const [precio, setprecio] = useState("0.0")
     const [errores, seterrores] = useState({})
     const [imagenes, setimagenes] = useState([])
     const [loading, setloading] = useState(false)
@@ -25,11 +26,10 @@ export default function EditarProducto(props) {
     useEffect(() => {
         (async () => {
             const response = await obternerRegistroxID("productos", id)
-            console.log(response)
             const {data} = response
-            settitulo(data.titulo)
-            setprecio(data.precio)
+            setprecio(data.precio.toString())
             setrating(data.rating)
+            settitulo(data.titulo)
             setimagenes(data.imagenes)
             setcategoria(data.categoria)
             setdescripcion(data.descripcion)
@@ -67,16 +67,15 @@ export default function EditarProducto(props) {
             const urlimagenes = await subirImagenesBatch(imagenes,"productos")
             const producto = {
                 precio,
-                titulo,
                 rating,
-                status: 1,
+                titulo,
                 categoria,
                 descripcion,
                 imagenes: urlimagenes,
                 usuario: ObtenerUsuario().uid,
             }
-            const registrarproducto = await actualizarRegistro("productos",id,producto)
-            if (registrarproducto.statusreponse) {
+            await actualizarRegistro("productos",id,producto)
+            .then((result) => {
                 setloading(false)
                 Alert.alert(
                     "Actualización completa",
@@ -86,8 +85,8 @@ export default function EditarProducto(props) {
                         text: "Aceptar",
                         onPress: () => navigation.navigate("mitienda"),
                     }]
-                )
-            } else {
+            )})
+            .catch((err) => {
                 setloading(false)
                 Alert.alert(
                     "Actualización Fallida",
@@ -97,7 +96,7 @@ export default function EditarProducto(props) {
                         text: "Aceptar",
                     }]
                 )
-            }
+            })
         }
     }
 
@@ -121,9 +120,9 @@ export default function EditarProducto(props) {
             />
             <Input
                 placeholder="Precio"
-                value={precio.toFixed(2)}
+                keyboardType="decimal-pad"
+                value={precio}
                 inputStyle={styles.input}
-                keyboardType="name-phone-pad"
                 errorMessage={errores.precio}
                 onChangeText={(text) => setprecio(parseFloat(text))}
             />
@@ -178,7 +177,6 @@ function SubirImagenes(props) {
                     containerStyle={styles.containerIcon}
                     onPress={async () => {
                         const resultado = await cargarImagenesxAspecto([1, 1])
-                        console.log(resultado)
                         if (resultado.status) {
                             setimagenes([...imagenes, resultado.imagen])
                         }

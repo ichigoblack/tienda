@@ -261,11 +261,29 @@ export const actualizarRegistro = async (coleccion, documento, data) => {
     .then((result) => (response.statusresponse = true))
     .catch((err) => console.log(err));
   return response;
-};
+}
+
+export const eliminarImagenes = async (coleccion, imagenes) => {
+  let response = { statusresponse: false }
+  await Promise.all(
+    map(imagenes, async (image) => {
+      console.log("imagen",image)
+      const n = image.split('%2F').pop().split('#').shift().split('?').shift()
+      console.log("recortada",n)
+      const ref = firebase.storage().ref(coleccion).child(n)
+      await ref.delete().then(function() {
+        response.statusresponse = true
+        console.log("eliminado correctamente")
+      }).catch(function(error) {
+        console.log(error)
+      })
+    })
+  )
+  return response
+}
 
 export const eliminarProducto = async (coleccion, documento) => {
   let response = { statusresponse: false };
-
   await db
     .collection(coleccion)
     .doc(documento)
@@ -273,10 +291,10 @@ export const eliminarProducto = async (coleccion, documento) => {
     .then((result) => (response.statusresponse = true))
     .catch((err) => {
       console.log(err);
-    });
+    })
 
   return response;
-};
+}
 
 export const obtenerDatosUsuario = async (documento) => {
   let response = {};
@@ -293,7 +311,7 @@ export const obtenerDatosUsuario = async (documento) => {
   return response;
 };
 
-export const obtenerRegistroxID = async (coleccion, documento) => {
+export const obternerRegistroxID = async (coleccion, documento) => {
   let response = { statusresponse: false, data: null };
   await db
     .collection(coleccion)
