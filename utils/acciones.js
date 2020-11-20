@@ -152,30 +152,90 @@ export const addRegistroEspecifico = async (coleccion, doc, data) => {
 };
 
 export const subirImagenesBatch = async (imagenes, ruta) => {
-  const imagenesurl = [];
+  const imagenesurl = []
   await Promise.all(
     map(imagenes, async (image) => {
-      const blob = await convertirFicheroBlob(image);
-      const ref = firebase.storage().ref(ruta).child(uuid());
-
+      const blob = await convertirFicheroBlob(image)
+      const ref = firebase.storage().ref(ruta).child(uuid())
       await ref.put(blob).then(async (result) => {
         await firebase
           .storage()
           .ref(`${ruta}/${result.metadata.name}`)
           .getDownloadURL()
-          .then((imagenurl) => {
-            imagenesurl.push(imagenurl);
-          });
-      });
+          .then((imagenurl) => { 
+            imagenesurl.push(imagenurl)
+          })
+      })
     })
-  );
-  return imagenesurl;
-};
+  )
+  return imagenesurl
+}
+
+export const subirEditarImagenesBatch = async (imagenes,ruta) => {
+  const imagenesEnv = []
+  await Promise.all(
+    map(imagenes, async (image) => {
+      if(image.status){
+        imagenesEnv.push(image.imagen)
+      }else{
+        const blob = await convertirFicheroBlob(image.imagen)
+        const ref = firebase.storage().ref(ruta).child(uuid())
+        await ref.put(blob).then(async (result) => {
+          await firebase
+            .storage()
+            .ref(`${ruta}/${result.metadata.name}`)
+            .getDownloadURL()
+            .then(async(imagenurl) => {
+              await imagenesEnv.push(imagenurl)
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
+      }
+    })
+  )
+  return imagenesEnv
+}
+
+export const verificarImagenes = async (imagenesR,imagenesE) => {
+  const imagenesUrl = []
+  await Promise.all(
+    map(imagenesE, async (image) => {
+      let response = {imagen:image,status:false}
+      map(imagenesR, async (imageR) => {
+        if(image === imageR){
+          response.status=true
+        }
+      })
+      imagenesUrl.push(response)
+    })
+  )
+  return imagenesUrl
+}
+
+export const verificarImagenesEliminar = async (imagenesR,imagenesE) => {
+  const imagenesUrl = []
+  await Promise.all(
+    map(imagenesR, async (imageR) => {
+      let response = true
+      map(imagenesE, async (imageE) => {
+        if(imageR === imageE){
+          response = false
+        }
+      })
+      if(response){
+        imagenesUrl.push(imageR)
+      }
+    })
+  )
+  return imagenesUrl
+}
 
 export const actualilzarPerfil = async (data) => {
   let respuesta = false;
   await firebase
-    .auth()
+    .auth() 
     .currentUser.updateProfile(data)
     .then((response) => {
       respuesta = true;

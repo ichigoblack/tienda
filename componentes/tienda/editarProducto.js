@@ -6,8 +6,11 @@ import {cargarImagenesxAspecto} from '../../utils/utils'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Icon,Image,Input,Avatar,Button,AirbnbRating} from 'react-native-elements'
 import {Text,View,Alert,ScrollView,StyleSheet,TouchableOpacity} from 'react-native'
-import {ObtenerUsuario,subirImagenesBatch,actualizarRegistro,obternerRegistroxID} from '../../utils/acciones'
-
+import {ObtenerUsuario,eliminarImagenes,
+        verificarImagenes,actualizarRegistro,
+        obternerRegistroxID,subirEditarImagenesBatch,
+        verificarImagenesEliminar} from '../../utils/acciones'
+                       
 export default function EditarProducto(props) {
 
     const {route} = props
@@ -20,6 +23,7 @@ export default function EditarProducto(props) {
     const [errores, seterrores] = useState({})
     const [imagenes, setimagenes] = useState([])
     const [loading, setloading] = useState(false)
+    const [imagenesR, setimagenesR] = useState([])
     const [categoria, setcategoria] = useState("")
     const [descripcion, setdescripcion] = useState("")
 
@@ -31,6 +35,7 @@ export default function EditarProducto(props) {
             setrating(data.rating)
             settitulo(data.titulo)
             setimagenes(data.imagenes)
+            setimagenesR(data.imagenes)
             setcategoria(data.categoria)
             setdescripcion(data.descripcion)
         })()
@@ -64,14 +69,17 @@ export default function EditarProducto(props) {
             )
         } else {
             setloading(true)
-            const urlimagenes = await subirImagenesBatch(imagenes,"productos")
+            const urlimagenes = await verificarImagenes(imagenesR,imagenes)
+            const urlSubirImagenes = await subirEditarImagenesBatch(urlimagenes,"productos")
+            const urlimagenesEliminar = await verificarImagenesEliminar(imagenesR,urlSubirImagenes)
+            await eliminarImagenes("productos", urlimagenesEliminar)
             const producto = {
                 precio,
                 rating,
                 titulo,
                 categoria,
                 descripcion,
-                imagenes: urlimagenes,
+                imagenes: urlSubirImagenes,
                 usuario: ObtenerUsuario().uid,
             }
             await actualizarRegistro("productos",id,producto)

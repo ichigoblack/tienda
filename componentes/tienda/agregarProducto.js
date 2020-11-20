@@ -64,7 +64,7 @@ export default function agregarProducto(){
             }
             const registrarproducto = await addRegistro("productos", producto)
             if (registrarproducto.statusreponse) {
-                setloading(false);
+                setloading(false)
                 Alert.alert(
                     "Registro Exitoso",
                     "El producto se ha registrado correctamente",
@@ -75,7 +75,7 @@ export default function agregarProducto(){
                     }]
                 )
               } else {
-                setloading(false);
+                setloading(false)
                 Alert.alert(
                     "Registro Fallido",
                     "Ha ocurrido un error al registrar producto",
