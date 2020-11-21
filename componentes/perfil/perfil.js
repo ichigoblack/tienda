@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
    
    container: {
       flex: 1,
+      marginTop:40,
    },
    avatarinline: {
       marginTop: -70,

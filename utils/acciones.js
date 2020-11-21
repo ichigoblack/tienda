@@ -1,17 +1,17 @@
-import { firebaseapp } from "./firebas";
-import { Platform } from "react-native";
-import * as firebase from "firebase";
-import Constants from "expo-constants";
-import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
-import "firebase/firestore";
-import uuid from "random-uuid-v4";
-import { map } from "lodash";
-import { convertirFicheroBlob } from "./utils";
-import { FireSQL } from "firesql";
+import {map} from 'lodash'
+import 'firebase/firestore'
+import {FireSQL} from 'firesql'
+import uuid from 'random-uuid-v4'
+import * as firebase from 'firebase'
+import {Platform} from 'react-native'
+import {firebaseapp} from './firebas'
+import Constants from 'expo-constants'
+import {convertirFicheroBlob} from './utils'
+import * as Permissions from 'expo-permissions'
+import * as Notifications from 'expo-notifications'
 
-const db = firebase.firestore(firebaseapp);
-const fireSQL = new FireSQL(firebase.firestore(), { includeId: "id" });
+const db = firebase.firestore(firebaseapp)
+const fireSQL = new FireSQL(firebase.firestore(), { includeId: "id" })
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -392,28 +392,25 @@ export const obternerRegistroxID = async (coleccion, documento) => {
 export const ListarProductos = async () => {
   const productoslist = [];
   let index = 0;
-
   await db
     .collection("productos")
     .where("status", "==", 1)
     .get()
     .then((response) => {
       response.forEach((doc) => {
-        const producto = doc.data();
-        producto.id = doc.id;
-        productoslist.push(producto);
-      });
+        const producto = doc.data()
+        producto.id = doc.id
+        productoslist.push(producto)
+      })
     })
-    .catch((err) => console.log(err));
-
+    .catch((err) => console.log(err))
   for (const registro of productoslist) {
-    const usuario = await obternerRegistroxID("Usuarios", registro.usuario);
-    productoslist[index].usuario = usuario.data;
-    index++;
+    const usuario = await obternerRegistroxID("users", registro.usuario);
+    productoslist[index].usuario = usuario.data
+    index++
   }
-
-  return productoslist;
-};
+  return productoslist
+}
 
 export const listarProductosxCategoria = async (categoria) => {
   const productoslist = [];
@@ -506,31 +503,26 @@ export const setMensajeNotificacion = (token, titulo, body, data) => {
 };
 
 export const ListarNotificaciones = async () => {
-  let respuesta = { statusresponse: false, data: [] };
-
-  let index = 0;
-
+  let respuesta = { statusresponse: false, data: [] }
+  let index = 0
   await db
     .collection("Notificaciones")
     .where("receiver", "==", ObtenerUsuario().uid)
     .where("visto", "==", 0)
     .get()
     .then((response) => {
-      let datos;
-
+      let datos
       response.forEach((doc) => {
-        datos = doc.data();
-        datos.id = doc.id;
-        respuesta.data.push(datos);
-      });
-      respuesta.statusresponse = true;
-    });
-
+        datos = doc.data()
+        datos.id = doc.id
+        respuesta.data.push(datos)
+      })
+      respuesta.statusresponse = true
+    })
   for (const notificacion of respuesta.data) {
-    const usuario = await obternerRegistroxID("Usuarios", notificacion.sender);
-    respuesta.data[index].sender = usuario.data;
-    index++;
+    const usuario = await obternerRegistroxID("Usuarios", notificacion.sender)
+    respuesta.data[index].sender = usuario.data
+    index++
   }
-
-  return respuesta;
-};
+  return respuesta
+}

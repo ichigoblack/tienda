@@ -3,9 +3,9 @@ import ShopButton from '../ShopButton'
 import {Icon} from 'react-native-elements'
 import {createDrawerNavigator} from '@react-navigation/drawer'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-
-import TiendaStack from '../perfil/com'
+  
 import MiTienda from './tiendaStack'
+import TiendaStack from '../market/market'
 import PerfilStack from '../navegacion/perfilStack'
 
 const Tab = createBottomTabNavigator()
