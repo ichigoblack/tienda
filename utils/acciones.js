@@ -440,16 +440,14 @@ export const listarProductosxCategoria = async (categoria) => {
 };
 
 export const Buscar = async (search) => {
-  let productos = [];
-
+  let productos = []
   await fireSQL
-    .query(`SELECT * FROM Productos WHERE titulo LIKE '${search}%' `)
+    .query(`SELECT * FROM productos WHERE titulo LIKE '${search}%' `)
     .then((response) => {
-      productos = response;
-    });
-
-  return productos;
-};
+      productos = response
+    })
+  return productos
+}
 
 export const iniciarnotificaciones = (
   notificationListener,

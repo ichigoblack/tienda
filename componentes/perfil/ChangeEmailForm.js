@@ -57,41 +57,41 @@ export default function ChangeEmailForm(props) {
 
     return (
         <View style={styles.view}>
-        <Input
-            placeholder="Correo electronico"
-            containerStyle={styles.input}
-            defaultValue={email || ""}
-            rightIcon={{
-                type: "material-community",
-                name: "at",
-                color: "#128c7e",
-            }}
-            onChange={(e) => onChange(e, "email")}
-            errorMessage={errors.email}
-        />
-        <Input
-            placeholder="Contraseña"
-            containerStyle={styles.input}
-            password={true}
-            secureTextEntry={showPassword ? false : true}
-            rightIcon={{
-                type: "material-community",
-                name: showPassword ? "eye-off-outline" : "eye-outline",
-                color: "#128c7e",
-                onPress: () => setShowPassword(!showPassword),
-            }}
-            onChange={(e) => onChange(e, "password")}
-            errorMessage={errors.password}
-        />
-        <Button
-            title="Cambiar email"
-            containerStyle={styles.btnContainer}
-            buttonStyle={styles.btn}
-            onPress={onSubmit}
-            loading={isLoading}
-        />
-    </View>
-  )
+            <Input
+                placeholder="Correo electronico"
+                containerStyle={styles.input}
+                defaultValue={email || ""}
+                rightIcon={{
+                    type: "material-community",
+                    name: "at",
+                    color: "#128c7e",
+                }}
+                onChange={(e) => onChange(e, "email")}
+                errorMessage={errors.email}
+            />
+            <Input
+                placeholder="Contraseña"
+                containerStyle={styles.input}
+                password={true}
+                secureTextEntry={showPassword ? false : true}
+                rightIcon={{
+                    type: "material-community",
+                    name: showPassword ? "eye-off-outline" : "eye-outline",
+                    color: "#128c7e",
+                    onPress: () => setShowPassword(!showPassword),
+                }}
+                onChange={(e) => onChange(e, "password")}
+                errorMessage={errors.password}
+            />
+            <Button
+                title="Cambiar email"
+                containerStyle={styles.btnContainer}
+                buttonStyle={styles.btn}
+                onPress={onSubmit}
+                loading={isLoading}
+            />
+        </View>
+    )
 }
 
 function defaultValue() {

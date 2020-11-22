@@ -5,8 +5,8 @@ import {createDrawerNavigator} from '@react-navigation/drawer'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
   
 import MiTienda from './tiendaStack'
-import TiendaStack from '../market/market'
-import PerfilStack from '../navegacion/perfilStack'
+import TiendaStack from './markingStack'
+import PerfilStack from './perfilStack'
 
 const Tab = createBottomTabNavigator()
 const Drawer = createDrawerNavigator()
