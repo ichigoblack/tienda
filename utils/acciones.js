@@ -33,12 +33,12 @@ export const reauthenticate = (password) =>{
 export const validarsesion = (setvalidarsesion) => {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      setvalidarsesion(true);
+      setvalidarsesion(true)
     } else {
-      setvalidarsesion(false);
+      setvalidarsesion(false)
     }
-  });
-};
+  })
+}
 
 export const cerrarsesion = () => {
   firebase.auth().signOut();

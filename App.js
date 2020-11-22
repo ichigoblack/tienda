@@ -1,5 +1,5 @@
+import {LogBox} from 'react-native'
 import {encode,decode} from 'base-64'
-import {LogBox} from "react-native"
 import {validarsesion} from './utils/acciones'
 import React,{useState,useEffect} from 'react'
 import RutasAutenticadas from './componentes/navegacion/rutasAutenticadas'
@@ -19,15 +19,15 @@ LogBox.ignoreLogs([
   "Setting a timer",
   "Avatar.onAccessoryPress",
   "Avatar.showAccessory",
-]);
+])
 
 export default function App() {
   const [user, setuser] = useState(false);
 
   useEffect(() => {
-    validarsesion(setuser);
+    validarsesion(setuser)
   }, [])
 
-  return user ? <RutasAutenticadas /> : <RutasNoAutenticadas />;
+  return user ? <RutasAutenticadas /> : <RutasNoAutenticadas />
 
 }

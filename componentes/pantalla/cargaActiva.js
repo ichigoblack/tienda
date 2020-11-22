@@ -1,17 +1,30 @@
 import React,{useEffect} from 'react'
 import {View,StyleSheet} from 'react-native'
 import * as Animatable from 'react-native-animatable'
+import {ObtenerUsuario,obtenerDatosUsuario} from '../../utils/acciones'
 
 export default function CargaActiva({navigation}) {
+
+    const usuario = ObtenerUsuario()
 
     const photo={
         foto:require("../../assets/reactNative.png"),
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            navigation.navigate('Navegacion')
-            }, 3000);
+        (async () => {
+            await obtenerDatosUsuario(usuario.uid)
+            .then((result) => {
+                if(result.tipo){
+                    navigation.navigate('Admin')
+                }else{
+                    navigation.navigate('User')
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        })()
     }, [])
 
     return (

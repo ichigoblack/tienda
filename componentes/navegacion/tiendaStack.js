@@ -2,13 +2,14 @@ import React from 'react'
 import {View,StyleSheet} from 'react-native'
 import {createStackNavigator} from '@react-navigation/stack'
 
-import MiTienda from '../tienda/mitienda'
+import Mitienda from '../tienda/mitienda'
 import AddProduct from '../tienda/agregarProducto'
 import EditarProducto from '../tienda/editarProducto'
 
 const Stack = createStackNavigator()
 
 export default function MiTiendaStack() {
+
     return (
         <View style={styles.container}>
             <Stack.Navigator
@@ -20,7 +21,7 @@ export default function MiTiendaStack() {
                 }}
             >
                 <Stack.Screen
-                    component={MiTienda}
+                    component={Mitienda}
                     name="mitienda"
                     options={{
                         headerLeft: null,

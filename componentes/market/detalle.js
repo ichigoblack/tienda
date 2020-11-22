@@ -42,7 +42,7 @@ export default function Detalle(props) {
                 </View>
             </View>
             <Button
-                title="Cambiar email"
+                title="Añadir al carrito"
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btn}
                 //onPress={onSubmit}

@@ -4,9 +4,9 @@ import {Icon} from 'react-native-elements'
 import {createDrawerNavigator} from '@react-navigation/drawer'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
   
-import MiTienda from './tiendaStack'
-import TiendaStack from './markingStack'
+import MiTienda from './carritoStack'
 import PerfilStack from './perfilStack'
+import TiendaStack from './markingStack'
 
 const Tab = createBottomTabNavigator()
 const Drawer = createDrawerNavigator()
@@ -38,7 +38,7 @@ const TabBar = () => {
       <Tab.Screen
         component={MiTienda}
         name="mitienda"
-        options={{ title: "Medio", tabBarIcon: () => <ShopButton /> }}
+        options={{ title: "", tabBarIcon: () => <ShopButton /> }}
       />
       <Tab.Screen
         component={PerfilStack}
@@ -54,10 +54,10 @@ function mostrarIcono(route, color) {
 
   switch (route.name) {
     case "tienda":
-      iconName = "cart-outline"
+      iconName = "store"
       break
     case "mitienda":
-      iconName = "cart-outline"
+      iconName = "store"
       break
     case "cuenta":
       iconName = "account-circle-outline"
