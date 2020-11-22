@@ -20,9 +20,6 @@ export default function Market() {
     const [mensajes, setmensajes] = useState("Cargando...")
     const [notificaciones, setnotificaciones] = useState(0)
 
-    const [showModal, setShowModal] = useState(false)
-    const [renderComponent, setRenderComponent] = useState(null)
-
     const photo={
         foto:require("../../assets/avatar.jpg")
     }
@@ -164,13 +161,9 @@ export default function Market() {
                 <FlatList
                     data={productlist}
                     renderItem={(producto)=>(
-                        <Producto
+                        <Producto 
                             producto={producto} 
                             navigation={navigation}
-                            showModal={showModal}
-                            setShowModal={setShowModal}
-                            renderComponent={renderComponent}
-                            setRenderComponent={setRenderComponent}
                         />
                     )}
                     keyExtractor={(item,index)=>index.toString}
@@ -178,21 +171,19 @@ export default function Market() {
             ):(
             <Text>{mensajes}</Text>
             )}
-            {renderComponent && (
-              <Modal isVisible={showModal} setIsVisible={setShowModal}>
-                {renderComponent}
-              </Modal>
-            )}
         </View>
     )
 }
 
 function Producto(props) {
     const {producto,navigation} = props
-    const {id,precio,rating,titulo,usuario,imagenes,descripcion,showModal,setShowModal,renderComponent,setRenderComponent} = producto.item
+    const {id,precio,rating,titulo,usuario,imagenes,descripcion} = producto.item
+    
+    const [showModal, setShowModal] = useState(false)
+    const [renderComponent, setRenderComponent] = useState(null)
 
     const detalle = async () => {
-        await setRenderComponent(
+        setRenderComponent(
             <Detalle producto={producto}/>
         )
         setShowModal(true)
@@ -219,6 +210,11 @@ function Producto(props) {
                     <Text style={styles.precio}>${precio}</Text>
                 </View>
             </TouchableOpacity>
+            {renderComponent && (
+              <Modal isVisible={showModal} setIsVisible={setShowModal}>
+                {renderComponent}
+              </Modal>
+            )}
         </>
     )
 }
