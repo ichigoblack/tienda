@@ -2,23 +2,32 @@ import {size} from 'lodash'
 import Modal from '../Modal'
 import Detalle from './detalle'
 import Busqueda from '../busqueda'
-import React,{useState,useEffect,useCallback} from 'react'
-import {Icon,Badge,Image,Avatar,Rating} from 'react-native-elements'
+import React,{useRef,useState,useEffect,useCallback} from 'react'
+import {Icon,Badge,Image,Rating} from 'react-native-elements'
+import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
-import {Buscar,ObtenerUsuario,ListarProductos,ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
+import {Buscar,ObtenerUsuario,obtenerDatosUsuario,ListarProductos,ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
 
+//import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 export default function Market() {
     
+    const menu = useRef()
+    const usuario = ObtenerUsuario()
     const navigation = useNavigation()
-    //const {photoURL} = ObtenerUsuario()
+    const [inf, setInf] = useState(null)
+    const [total, setTotal] = useState(0)
     const [search, setsearch] = useState("")
     const [categoria, setcategoria] = useState("")
     const [productlist, setproductlist] = useState([])
     const [mensajes, setmensajes] = useState("Cargando...")
     const [notificaciones, setnotificaciones] = useState(0)
+    const [notificacionesCompra, setnotificacionesCompra] = useState(0)
+
+    const hideMenu = () => menu.current.hide()
+    const showMenu = () => menu.current.show()
 
     const photo={
         foto:require("../../assets/avatar.jpg")
@@ -27,6 +36,13 @@ export default function Market() {
     useEffect(()=>{
         (async()=>{
             setproductlist(await ListarProductos())
+            await obtenerDatosUsuario(usuario.uid)
+            .then((result) => {
+                setInf(result)
+             })
+             .catch((err) => {
+                console.log("err",err)
+             })
         })()
     },[])
 
@@ -74,23 +90,33 @@ export default function Market() {
                                 style={{marginRight:20}}
                                 //onPress={() => {navigation.navigate("mensajes")}}
                             />
-                            <Badge
-                                status="error"
-                                value={2}
-                                containerStyle={{ position: "absolute", top: -4, right: -10 }}
-                            />
-                            <Icon
-                                size={35}
-                                color="#fff"
-                                name="cart-outline"
-                                type="material-community"
-                                //onPress={() => {navigation.navigate("mensajes")}}
-                            />
-                            <Badge
-                                status="error"
-                                value={4}
-                                containerStyle={{ position: "absolute", top: -4, right: 53 }}
-                            />
+                            {notificaciones > 0 && (
+                               <Badge
+                                    status="error"
+                                    value={notificaciones}
+                                    containerStyle={{ position: "absolute", top: -4, right: -10 }}
+                                /> 
+                            )}
+                            <Menu 
+                                ref={menu} 
+                                button={
+                                    <Icon
+                                        size={35}
+                                        color="#fff"
+                                        onPress={showMenu}
+                                        name="cart-outline"
+                                        type="material-community"
+                                    />
+                                }
+                            >
+                                <MenuItem onPress={hideMenu}>
+                                    <Text style={{color:'#128c7e',fontSize:18}}>Productos</Text>
+                                </MenuItem>
+                                <MenuDivider />
+                                <MenuItem onPress={hideMenu}>
+                                    <Text style={{fontSize:16}}>Total: {total}</Text>
+                                </MenuItem>
+                            </Menu>
                         </View>
                     </View>          
                     <Busqueda
@@ -162,7 +188,8 @@ export default function Market() {
                     data={productlist}
                     renderItem={(producto)=>(
                         <Producto 
-                            producto={producto} 
+                            usuario={inf}
+                            producto={producto}
                             navigation={navigation}
                         />
                     )}
@@ -176,25 +203,22 @@ export default function Market() {
 }
 
 function Producto(props) {
-    const {producto,navigation} = props
-    const {id,precio,rating,titulo,usuario,imagenes,descripcion} = producto.item
+    const {producto,usuario,navigation} = props
+    const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
     
     const [showModal, setShowModal] = useState(false)
     const [renderComponent, setRenderComponent] = useState(null)
 
     const detalle = async () => {
         setRenderComponent(
-            <Detalle producto={producto}/>
+            <Detalle producto={producto} usuario={usuario}/>
         )
         setShowModal(true)
     }
     
     return (
         <>
-            <TouchableOpacity
-                style={styles.card}
-                onPress={detalle}
-            >
+            <TouchableOpacity onPress={detalle} style={styles.card}>
                 <Image source={{ uri: imagenes[0] }} style={styles.imgproducto} />
                 <View style={styles.infobox}>
                     <Text style={styles.titulo}>{titulo}</Text>

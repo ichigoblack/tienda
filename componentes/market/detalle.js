@@ -9,16 +9,16 @@ import Carousel from '../carousel'
 
 export default function Detalle(props) {
 
-    const {producto} = props
-    const {id,precio,rating,titulo,usuario,imagenes,descripcion} = producto.item
+    const {producto,usuario} = props
+    const {tipo} = usuario
+    const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
     const [activeslide, setactiveslide] = useState(0)
 
     const photo={
         foto:require("../../assets/avatar.jpg")
     }
-/*
- */
+
     return (
         <>
             <View style={styles.view}>
@@ -41,13 +41,15 @@ export default function Detalle(props) {
                     <Rating imageSize={30} startingValue={rating} readonly/>
                 </View>
             </View>
-            <Button
-                title="Añadir al carrito"
-                containerStyle={styles.btnContainer}
-                buttonStyle={styles.btn}
-                //onPress={onSubmit}
-                //loading={isLoading}
-            />
+            {!tipo &&
+                <Button
+                    title="Añadir al carrito"
+                    containerStyle={styles.btnContainer}
+                    buttonStyle={styles.btn}
+                    //onPress={onSubmit}
+                    //loading={isLoading}
+                />
+            } 
         </>
     )
 }
