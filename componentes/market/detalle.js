@@ -1,7 +1,8 @@
 import {size} from 'lodash'
 import React,{useState,useEffect} from 'react'
 //import {enviarWhatsapp} from "../../Utils/Utils"
-import {Icon,Input,Avatar,Button,Rating} from 'react-native-elements'
+import {Button,Rating} from 'react-native-elements'
+import AsyncStorage from '@react-native-community/async-storage'
 import {Text,View,Alert,Dimensions,ScrollView,StyleSheet} from 'react-native'
 import {addRegistro,ObtenerUsuario,obternerRegistroxID,sendPushNotification,setMensajeNotificacion} from '../../utils/acciones'
 
@@ -17,6 +18,27 @@ export default function Detalle(props) {
 
     const photo={
         foto:require("../../assets/avatar.jpg")
+    }
+
+    const saveArticle = async (key, value) =>{
+        try {
+            console.log("se esta guardando")
+            await AsyncStorage.setItem(key, value)
+            getAllData()
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const getAllData = () =>{
+        AsyncStorage.getAllKeys().then((keys) => {
+          return AsyncStorage.multiGet(keys)
+            .then((result) => {
+                console.log(result)
+            }).catch((e) =>{
+                console.log(e)
+            })
+        })
     }
 
     return (
@@ -46,7 +68,7 @@ export default function Detalle(props) {
                     title="Añadir al carrito"
                     containerStyle={styles.btnContainer}
                     buttonStyle={styles.btn}
-                    //onPress={onSubmit}
+                    onPress={() =>saveArticle('product',producto)}
                     //loading={isLoading}
                 />
             } 

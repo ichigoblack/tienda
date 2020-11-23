@@ -110,7 +110,7 @@ export default function Market() {
                                 }
                             >
                                 <MenuItem onPress={hideMenu}>
-                                    <Text style={{color:'#128c7e',fontSize:18}}>Productos</Text>
+                                    9<Text style={{color:'#128c7e',fontSize:18}}>Productos</Text>......1111111111111111111111111                                                                     11111
                                 </MenuItem>
                                 <MenuDivider />
                                 <MenuItem onPress={hideMenu}>

@@ -21,8 +21,10 @@ LogBox.ignoreLogs([
   "Avatar.showAccessory",
 ])
 
+
 export default function App() {
-  const [user, setuser] = useState(false);
+  
+  const [user, setuser] = useState(false)
 
   useEffect(() => {
     validarsesion(setuser)
