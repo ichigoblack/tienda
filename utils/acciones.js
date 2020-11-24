@@ -42,7 +42,7 @@ export const validarsesion = (setvalidarsesion) => {
 
 export const cerrarsesion = () => {
   firebase.auth().signOut();
-};
+}
 
 export const validarPhone = (setphoneauth) => {
   db.collection("Usuarios")
@@ -404,11 +404,11 @@ export const ListarProductos = async () => {
       })
     })
     .catch((err) => console.log(err))
-  for (const registro of productoslist) {
+  /*for (const registro of productoslist) {
     const usuario = await obternerRegistroxID("users", registro.usuario);
     productoslist[index].usuario = usuario.data
     index++
-  }
+  }*/
   return productoslist
 }
 

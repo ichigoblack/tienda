@@ -1,11 +1,12 @@
-import {size} from 'lodash'
+import {map,size} from 'lodash'
 import Modal from '../Modal'
 import Detalle from './detalle'
 import Busqueda from '../busqueda'
-import React,{useRef,useState,useEffect,useCallback} from 'react'
+import {useFocusEffect} from '@react-navigation/native'
 import {Icon,Badge,Image,Rating} from 'react-native-elements'
+import AsyncStorage from '@react-native-community/async-storage'
+import React,{useRef,useState,useEffect,useCallback} from 'react'
 import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
-import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
 import {Buscar,ObtenerUsuario,obtenerDatosUsuario,ListarProductos,ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
@@ -16,11 +17,12 @@ export default function Market() {
     
     const menu = useRef()
     const usuario = ObtenerUsuario()
-    const navigation = useNavigation()
     const [inf, setInf] = useState(null)
     const [total, setTotal] = useState(0)
     const [search, setsearch] = useState("")
     const [categoria, setcategoria] = useState("")
+    const [showModal, setShowModal] = useState(false)
+    const [listProduct, setListProduct] = useState([])
     const [productlist, setproductlist] = useState([])
     const [mensajes, setmensajes] = useState("Cargando...")
     const [notificaciones, setnotificaciones] = useState(0)
@@ -33,8 +35,13 @@ export default function Market() {
         foto:require("../../assets/avatar.jpg")
     }
 
+    const product = 'producto'
+
     useEffect(()=>{
         (async()=>{
+            console.log("useEffect")
+            //getAllData()
+            readData(product)
             setproductlist(await ListarProductos())
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
@@ -49,6 +56,7 @@ export default function Market() {
     useFocusEffect(
         useCallback(() => {
             (async () => {
+                console.log("useFocusEffect")
                 setnotificaciones(0)
                 setproductlist(await ListarProductos())
                 const consulta = await ListarNotificaciones()
@@ -58,6 +66,39 @@ export default function Market() {
             })()
         }, [])
     )
+
+    const readData = async (clave) => {
+        try {
+            await AsyncStorage.getItem(clave)
+            .then((result) => {
+                console.log("readData",result)
+                setListProduct(JSON.parse(result))
+                setTotal(JSON.parse(result).length)
+                //console.log("lista",JSON.parse(result).length)
+
+               /* map(JSON.parse(result), async (image) => {
+                    console.log("producto",image)
+                })*/
+                //console.log("objeto",JSON.parse(result))
+            }).catch((e) =>{
+                console.log(e)
+                console.log("no hay items")
+            })
+        } catch (e) {
+            console.log('Failed to fetch the data from storage')
+        }
+    }
+
+    const getAllData = () =>{
+        AsyncStorage.getAllKeys().then((keys) => {
+          return AsyncStorage.multiGet(keys)
+            .then((result) => {
+                console.log(result)
+            }).catch((e) =>{
+                console.log(e)
+            })
+        })
+    }
 
     const cargarFiltroxCategoria = async (categoria) => {
         const listaproductos = await listarProductosxCategoria(categoria)
@@ -108,9 +149,10 @@ export default function Market() {
                                         type="material-community"
                                     />
                                 }
+                                style={{width:110}}
                             >
                                 <MenuItem onPress={hideMenu}>
-                                    9<Text style={{color:'#128c7e',fontSize:18}}>Productos</Text>......1111111111111111111111111                                                                     11111
+                                    <Text style={{color:'#128c7e',fontSize:18}}>Items</Text>                                                                 11111
                                 </MenuItem>
                                 <MenuDivider />
                                 <MenuItem onPress={hideMenu}>
@@ -190,7 +232,10 @@ export default function Market() {
                         <Producto 
                             usuario={inf}
                             producto={producto}
-                            navigation={navigation}
+                            showModal={showModal}
+                            listProduct={listProduct}
+                            setShowModal={setShowModal}
+                            setListProduct={setListProduct}
                         />
                     )}
                     keyExtractor={(item,index)=>index.toString}
@@ -203,15 +248,16 @@ export default function Market() {
 }
 
 function Producto(props) {
-    const {producto,usuario,navigation} = props
+    const {usuario,producto,showModal,listProduct,setShowModal,setListProduct} = props
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
-    
-    const [showModal, setShowModal] = useState(false)
     const [renderComponent, setRenderComponent] = useState(null)
 
     const detalle = async () => {
         setRenderComponent(
-            <Detalle producto={producto} usuario={usuario}/>
+            <Detalle 
+                producto={producto} usuario={usuario} 
+                showModal={showModal} listProduct={listProduct} 
+                setShowModal={setShowModal} setListProduct={setListProduct}/>
         )
         setShowModal(true)
     }

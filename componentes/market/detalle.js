@@ -8,27 +8,39 @@ import {addRegistro,ObtenerUsuario,obternerRegistroxID,sendPushNotification,setM
 
 import Carousel from '../carousel'
 
+const product = 'ListaProducto'
+
 export default function Detalle(props) {
 
-    const {producto,usuario} = props
+    const {usuario,producto,showModal,listProduct,setShowModal,setListProduct} = props
     const {tipo} = usuario
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
     const [activeslide, setactiveslide] = useState(0)
 
+    const [lista, setLista] = useState([])
+
     const photo={
         foto:require("../../assets/avatar.jpg")
     }
 
+    const product = 'producto'
+
     const saveArticle = async (key, value) =>{
+        setLista(listProduct)
+        console.log("lista",listProduct)
+        lista.push(value)
         try {
             console.log("se esta guardando")
-            await AsyncStorage.setItem(key, value)
-            getAllData()
+            clearStorage(key)
+            //await AsyncStorage.setItem(key, JSON.stringify(lista))
+            //getAllData()
+            setShowModal(false)
         } catch (e) {
-            console.log(e);
+            console.log(e)
+            setShowModal(false)
         }
-    }
+     }
 
     const getAllData = () =>{
         AsyncStorage.getAllKeys().then((keys) => {
@@ -39,6 +51,15 @@ export default function Detalle(props) {
                 console.log(e)
             })
         })
+    }
+    
+    const clearStorage = async (key) => {
+        try {
+            await AsyncStorage.removeItem(key)
+            console.log('Storage successfully cleared!')
+        } catch (e) {
+            console.log('Failed to clear the async storage.')
+        }
     }
 
     return (
@@ -68,7 +89,7 @@ export default function Detalle(props) {
                     title="Añadir al carrito"
                     containerStyle={styles.btnContainer}
                     buttonStyle={styles.btn}
-                    onPress={() =>saveArticle('product',producto)}
+                    onPress={() =>saveArticle(product,JSON.stringify(producto))}
                     //loading={isLoading}
                 />
             } 
