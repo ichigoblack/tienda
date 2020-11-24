@@ -3,8 +3,8 @@ import React,{useState,useEffect} from 'react'
 //import {enviarWhatsapp} from "../../Utils/Utils"
 import {Button,Rating} from 'react-native-elements'
 import AsyncStorage from '@react-native-community/async-storage'
-import {Text,View,Alert,Dimensions,ScrollView,StyleSheet} from 'react-native'
-import {addRegistro,ObtenerUsuario,obternerRegistroxID,sendPushNotification,setMensajeNotificacion} from '../../utils/acciones'
+import {Text,View,Dimensions,ScrollView,StyleSheet} from 'react-native'
+import {verificarArray} from '../../utils/acciones'
 
 import Carousel from '../carousel'
 
@@ -12,7 +12,7 @@ const product = 'ListaProducto'
 
 export default function Detalle(props) {
 
-    const {usuario,producto,showModal,listProduct,setShowModal,setListProduct} = props
+    const {total,usuario,producto,setTotal,showModal,listProduct,setShowModal,setListProduct,setproductlist} = props
     const {tipo} = usuario
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
@@ -27,19 +27,37 @@ export default function Detalle(props) {
     const product = 'producto'
 
     const saveArticle = async (key, value) =>{
-        setLista(listProduct)
-        console.log("lista",listProduct)
-        lista.push(value)
+        if(size(listProduct)>0){
+            await verificarArray(listProduct,value)
+            .then((result)=>{
+                console.log(result)
+                setShowModal(false)
+            })
+            .catch((result)=>{
+                console.log(result)
+                setShowModal(false)
+            })
+        }else{
+            console.log("vacia")
+            setTotal(1)
+            listProduct.push(value)
+            await AsyncStorage.setItem(key, JSON.stringify(listProduct))
+            setShowModal(false)
+        }
+       /* setLista(listProduct)
+        console.log("lista",size(listProduct))
+        */
+       /* lista.push(value)
         try {
             console.log("se esta guardando")
-            clearStorage(key)
+            //clearStorage(key)
             //await AsyncStorage.setItem(key, JSON.stringify(lista))
             //getAllData()
             setShowModal(false)
         } catch (e) {
             console.log(e)
             setShowModal(false)
-        }
+        }*/
      }
 
     const getAllData = () =>{

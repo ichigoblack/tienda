@@ -71,9 +71,13 @@ export default function Market() {
         try {
             await AsyncStorage.getItem(clave)
             .then((result) => {
-                console.log("readData",result)
-                setListProduct(JSON.parse(result))
-                setTotal(JSON.parse(result).length)
+                if( result !== null){
+                    console.log("readData",result)    
+                    setListProduct(JSON.parse(result))
+                    setTotal(JSON.parse(result).length)
+                }
+                
+                
                 //console.log("lista",JSON.parse(result).length)
 
                /* map(JSON.parse(result), async (image) => {
@@ -230,12 +234,16 @@ export default function Market() {
                     data={productlist}
                     renderItem={(producto)=>(
                         <Producto 
+                            total={total}
                             usuario={inf}
                             producto={producto}
+                            setTotal={setTotal}
                             showModal={showModal}
                             listProduct={listProduct}
+                            productlist={productlist}
                             setShowModal={setShowModal}
                             setListProduct={setListProduct}
+                            setproductlist={setproductlist}
                         />
                     )}
                     keyExtractor={(item,index)=>index.toString}
@@ -248,16 +256,19 @@ export default function Market() {
 }
 
 function Producto(props) {
-    const {usuario,producto,showModal,listProduct,setShowModal,setListProduct} = props
+    const {total,usuario,producto,setTotal,showModal,listProduct,productlist,setShowModal,setListProduct,setproductlist} = props
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
     const [renderComponent, setRenderComponent] = useState(null)
 
     const detalle = async () => {
         setRenderComponent(
-            <Detalle 
-                producto={producto} usuario={usuario} 
+            <Detalle
+                total={total} usuario={usuario} 
+                producto={producto}  setTotal={setTotal}
                 showModal={showModal} listProduct={listProduct} 
-                setShowModal={setShowModal} setListProduct={setListProduct}/>
+                productlist={productlist} setShowModal={setShowModal} 
+                setListProduct={setListProduct} setproductlist={setproductlist}
+            />
         )
         setShowModal(true)
     }

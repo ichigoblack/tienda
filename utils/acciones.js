@@ -1,5 +1,5 @@
-import {map} from 'lodash'
 import 'firebase/firestore'
+import {map,size} from 'lodash'
 import {FireSQL} from 'firesql'
 import uuid from 'random-uuid-v4'
 import * as firebase from 'firebase'
@@ -212,6 +212,21 @@ export const verificarImagenes = async (imagenesR,imagenesE) => {
     })
   )
   return imagenesUrl
+}
+
+export const verificarArray = async (array,dato) => {
+  const verificador = false
+  await Promise.all(
+    map(array, async (a) => {  
+      if(JSON.stringify(a) === JSON.stringify(dato)){
+        verificador = true
+        console.log("true")
+      }else{
+        console.log("false")
+      }
+    })
+  ) 
+  return verificador
 }
 
 export const verificarImagenesEliminar = async (imagenesR,imagenesE) => {
