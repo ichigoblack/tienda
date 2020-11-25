@@ -1,4 +1,4 @@
-import {map,size} from 'lodash'
+import {size} from 'lodash'
 import Modal from '../Modal'
 import Detalle from './detalle'
 import Busqueda from '../busqueda'
