@@ -9,7 +9,9 @@ import React,{useRef,useState,useEffect,useCallback} from 'react'
 import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
-import {Buscar,ObtenerUsuario,obtenerDatosUsuario,ListarProductos,ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
+import {ObtenerUsuario,convertirArray,
+        obtenerDatosUsuario,ListarProductos,
+        ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
 
 //import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
@@ -35,13 +37,13 @@ export default function Market() {
         foto:require("../../assets/avatar.jpg")
     }
 
-    const product = 'producto'
+    const product = 'Array'
 
     useEffect(()=>{
         (async()=>{
             console.log("useEffect")
-            //getAllData()
-            readData(product)
+            getAllData()
+            //await readData(product)
             setproductlist(await ListarProductos())
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
@@ -70,9 +72,15 @@ export default function Market() {
     const readData = async (clave) => {
         try {
             await AsyncStorage.getItem(clave)
-            .then((result) => {
+            .then(async(result) => {
                 if( result !== null){
-                    console.log("readData",result)    
+                    onsole.log("result",result)
+                    await convertirArray(result)
+                    .then((res)=>{console.log("res",res)})
+                    .catch((err)=>{console.log("err",err)})
+                    //console.log("readData",result)   
+                    //console.log("readData",JSON.parse(result))   
+
                     setListProduct(JSON.parse(result))
                     setTotal(JSON.parse(result).length)
                 }
@@ -97,7 +105,12 @@ export default function Market() {
         AsyncStorage.getAllKeys().then((keys) => {
           return AsyncStorage.multiGet(keys)
             .then((result) => {
-                console.log(result)
+                if(size(result)>1){
+                    console.log("size",size(JSON.parse(result[1][1])))
+                    console.log("aray",JSON.parse(result[1][1]))
+                    setTotal(size(JSON.parse(result[1][1])))
+                    setListProduct(JSON.parse(result[1][1]))
+                }
             }).catch((e) =>{
                 console.log(e)
             })

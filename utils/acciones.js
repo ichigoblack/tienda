@@ -215,17 +215,17 @@ export const verificarImagenes = async (imagenesR,imagenesE) => {
 }
 
 export const verificarArray = async (array,dato) => {
-  const verificador = false
+  let verificador = false
+
   await Promise.all(
-    map(array, async (a) => {  
-      if(JSON.stringify(a) === JSON.stringify(dato)){
-        verificador = true
-        console.log("true")
-      }else{
-        console.log("false")
+    map(array, async (a) => {
+      console.log("id a",a.item.id)
+      console.log("id b",dato.item.id)
+      if(a.item.id===dato.item.id){
+        return verificador = true
       }
     })
-  ) 
+  )
   return verificador
 }
 

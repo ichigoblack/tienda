@@ -2,9 +2,9 @@ import {size} from 'lodash'
 import React,{useState,useEffect} from 'react'
 //import {enviarWhatsapp} from "../../Utils/Utils"
 import {Button,Rating} from 'react-native-elements'
-import AsyncStorage from '@react-native-community/async-storage'
-import {Text,View,Dimensions,ScrollView,StyleSheet} from 'react-native'
 import {verificarArray} from '../../utils/acciones'
+import AsyncStorage from '@react-native-community/async-storage'
+import {Text,View,Alert,Dimensions,ScrollView,StyleSheet} from 'react-native'
 
 import Carousel from '../carousel'
 
@@ -28,36 +28,39 @@ export default function Detalle(props) {
 
     const saveArticle = async (key, value) =>{
         if(size(listProduct)>0){
+            //clearStorage(key)           
             await verificarArray(listProduct,value)
-            .then((result)=>{
-                console.log(result)
-                setShowModal(false)
+            .then(async(result)=>{
+                if(result){
+                    Alert.alert(
+                        "","El producto ya se encuentra en el carrito",
+                        [{
+                            style: "cancel",
+                            text: "Aceptar",
+                            onPress: () => setShowModal(false),
+                        }]
+                    )
+                }else{
+                    listProduct.push(value)
+                    setTotal(size(listProduct))
+                    await AsyncStorage.setItem(key, JSON.stringify(listProduct)).then(() => {
+                        console.log('Contacts updated.')
+                        setShowModal(false)
+                    })
+                }
             })
             .catch((result)=>{
                 console.log(result)
                 setShowModal(false)
             })
         }else{
-            console.log("vacia")
             setTotal(1)
             listProduct.push(value)
-            await AsyncStorage.setItem(key, JSON.stringify(listProduct))
-            setShowModal(false)
+            await AsyncStorage.setItem(key, JSON.stringify(listProduct)).then(() => {
+                console.log('Contacts updated.')
+                setShowModal(false)
+            })
         }
-       /* setLista(listProduct)
-        console.log("lista",size(listProduct))
-        */
-       /* lista.push(value)
-        try {
-            console.log("se esta guardando")
-            //clearStorage(key)
-            //await AsyncStorage.setItem(key, JSON.stringify(lista))
-            //getAllData()
-            setShowModal(false)
-        } catch (e) {
-            console.log(e)
-            setShowModal(false)
-        }*/
      }
 
     const getAllData = () =>{
@@ -70,7 +73,7 @@ export default function Detalle(props) {
             })
         })
     }
-    
+
     const clearStorage = async (key) => {
         try {
             await AsyncStorage.removeItem(key)
@@ -107,7 +110,7 @@ export default function Detalle(props) {
                     title="Añadir al carrito"
                     containerStyle={styles.btnContainer}
                     buttonStyle={styles.btn}
-                    onPress={() =>saveArticle(product,JSON.stringify(producto))}
+                    onPress={() =>saveArticle(product,producto)}
                     //loading={isLoading}
                 />
             } 
