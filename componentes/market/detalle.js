@@ -28,10 +28,10 @@ export default function Detalle(props) {
 
     const saveArticle = async (key, value) =>{
         if(size(listProduct)>0){
-            //clearStorage(key)           
+            //clearStorage(key)          
             await verificarArray(listProduct,value)
             .then(async(result)=>{
-                if(result){
+                 if(result){
                     Alert.alert(
                         "","El producto ya se encuentra en el carrito",
                         [{
@@ -43,8 +43,7 @@ export default function Detalle(props) {
                 }else{
                     listProduct.push(value)
                     setTotal(size(listProduct))
-                    await AsyncStorage.setItem(key, JSON.stringify(listProduct)).then(() => {
-                        console.log('Contacts updated.')
+                    await AsyncStorage.setItem(key,JSON.stringify(listProduct)).then(() => {
                         setShowModal(false)
                     })
                 }
@@ -56,7 +55,7 @@ export default function Detalle(props) {
         }else{
             setTotal(1)
             listProduct.push(value)
-            await AsyncStorage.setItem(key, JSON.stringify(listProduct)).then(() => {
+            await AsyncStorage.setItem(key,JSON.stringify(listProduct)).then(() => {
                 console.log('Contacts updated.')
                 setShowModal(false)
             })
@@ -110,8 +109,7 @@ export default function Detalle(props) {
                     title="Añadir al carrito"
                     containerStyle={styles.btnContainer}
                     buttonStyle={styles.btn}
-                    onPress={() =>saveArticle(product,producto)}
-                    //loading={isLoading}
+                    onPress={() =>saveArticle(product,id)}
                 />
             } 
         </>

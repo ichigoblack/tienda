@@ -3,13 +3,13 @@ import Modal from '../Modal'
 import Detalle from './detalle'
 import Busqueda from '../busqueda'
 import {useFocusEffect} from '@react-navigation/native'
-import {Icon,Badge,Image,Rating} from 'react-native-elements'
+import {Icon,Badge,Image,Button,Rating} from 'react-native-elements'
 import AsyncStorage from '@react-native-community/async-storage'
 import React,{useRef,useState,useEffect,useCallback} from 'react'
 import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
-import {ObtenerUsuario,convertirArray,
+import {ObtenerUsuario,verificarLista,
         obtenerDatosUsuario,ListarProductos,
         ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
 
@@ -37,13 +37,16 @@ export default function Market() {
         foto:require("../../assets/avatar.jpg")
     }
 
-    const product = 'Array'
+    const product = 'product'
 
     useEffect(()=>{
         (async()=>{
             console.log("useEffect")
-            getAllData()
             //await readData(product)
+            //getAllData()
+            //await clearAllStorage()
+            getAllKeys()
+            getMyValue()
             setproductlist(await ListarProductos())
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
@@ -69,52 +72,75 @@ export default function Market() {
         }, [])
     )
 
-    const readData = async (clave) => {
+    const readData = async (STORAGE_KEY) => {
         try {
-            await AsyncStorage.getItem(clave)
-            .then(async(result) => {
-                if( result !== null){
-                    onsole.log("result",result)
-                    await convertirArray(result)
-                    .then((res)=>{console.log("res",res)})
-                    .catch((err)=>{console.log("err",err)})
-                    //console.log("readData",result)   
-                    //console.log("readData",JSON.parse(result))   
-
-                    setListProduct(JSON.parse(result))
-                    setTotal(JSON.parse(result).length)
-                }
-                
-                
-                //console.log("lista",JSON.parse(result).length)
-
-               /* map(JSON.parse(result), async (image) => {
-                    console.log("producto",image)
-                })*/
-                //console.log("objeto",JSON.parse(result))
-            }).catch((e) =>{
-                console.log(e)
-                console.log("no hay items")
-            })
+            await AsyncStorage.getItem(STORAGE_KEY)
+            .then((result)=>{console.log(result)})
+            .catch((err)=>{console.log(err)})
+      
+          
         } catch (e) {
-            console.log('Failed to fetch the data from storage')
+            alert('Failed to fetch the data from storage')
+        }
+    }
+
+    const clearStorage = async (key) => {
+        try {
+            await AsyncStorage.removeItem(key)
+            console.log('Storage successfully cleared!')
+        } catch (e) {
+            console.log('Failed to clear the async storage.')
+        }
+    }
+
+    const clearAllStorage = async () => {
+        try {
+          await AsyncStorage.clear()
+          alert('Storage successfully cleared!')
+        } catch (e) {
+          alert('Failed to clear the async storage.')
         }
     }
 
     const getAllData = () =>{
         AsyncStorage.getAllKeys().then((keys) => {
           return AsyncStorage.multiGet(keys)
-            .then((result) => {
-                if(size(result)>1){
-                    console.log("size",size(JSON.parse(result[1][1])))
-                    console.log("aray",JSON.parse(result[1][1]))
-                    setTotal(size(JSON.parse(result[1][1])))
-                    setListProduct(JSON.parse(result[1][1]))
-                }
+            .then(async(result) => {
+                console.log("result",size(result))
+                console.log("result",result)
+                //console.log("result",JSON.parse(result))
+                //if(size(result)>0){
+                   // await verificarLista(JSON.parse(result))
+                    // setListProduct(JSON.parse(result[1][1]))
+                   // setTotal(size(JSON.parse(result[1][1])))
+               // }
             }).catch((e) =>{
                 console.log(e)
             })
         })
+    }
+
+    const getAllKeys = async () => {
+        let keys = []
+        try {
+          keys = await AsyncStorage.getAllKeys()
+        } catch(e) {
+        
+        }
+      
+        console.log(keys)
+    }
+
+    getMyValue = async () => {
+        let value = []
+        try {
+           value = await AsyncStorage.getItem("producto")
+        } catch(e) {
+          // read error
+        }
+        console.log('Done',JSON.parse(value))
+        setListProduct(JSON.parse(value))
+        setTotal(size(JSON.parse(value)))
     }
 
     const cargarFiltroxCategoria = async (categoria) => {
@@ -288,7 +314,7 @@ function Producto(props) {
     
     return (
         <>
-            <TouchableOpacity onPress={detalle} style={styles.card}>
+            <View style={styles.card}>
                 <Image source={{ uri: imagenes[0] }} style={styles.imgproducto} />
                 <View style={styles.infobox}>
                     <Text style={styles.titulo}>{titulo}</Text>
@@ -297,13 +323,17 @@ function Producto(props) {
                     </Text>
                     <Rating
                         readonly
-                        imageSize={15}
+                        imageSize={18}
                         startingValue={rating}
-                        style={{ paddingLeft: 40 }}
                     />
                     <Text style={styles.precio}>${precio}</Text>
+                    <Button
+                        title='Detalles'
+                        onPress={detalle}
+                        buttonStyle={styles.btn}
+                    />
                 </View>
-            </TouchableOpacity>
+            </View>
             {renderComponent && (
               <Modal isVisible={showModal} setIsVisible={setShowModal}>
                 {renderComponent}
@@ -364,6 +394,9 @@ const styles = StyleSheet.create({
     logo: {
         width: 70,
         height: 70,
+    },
+    btn: {
+        backgroundColor: "#00a680",
     },
     card: {
         flex: 1,
