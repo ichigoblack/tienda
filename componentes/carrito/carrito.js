@@ -1,11 +1,13 @@
 import {size,filter} from 'lodash'
+import Modal from '../Modal'
 import Loading from '../loading'
+import CompraModal from './compraModal'
 import {AntDesign} from '@expo/vector-icons'
 import {Image,Button,Rating} from 'react-native-elements'
-import {Text,View,FlatList,StyleSheet,TouchableOpacity} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 import React,{useRef,useState,useEffect,useCallback} from 'react'
-import {ObtenerUsuario,verificarLista,obtenerDatosUsuario} from '../../utils/acciones'
+import {Text,View,FlatList,StyleSheet,TouchableOpacity} from 'react-native'
+import {datos,ObtenerUsuario,verificarLista,obtenerDatosUsuario} from '../../utils/acciones'
 
 export default function Carrito(){
 
@@ -15,8 +17,10 @@ export default function Carrito(){
     const [total, setTotal] = useState(0)
     const [loading, setLoading] = useState(false)
     const [cantidad, setCantidad] = useState([])
+    const [showModal, setShowModal] = useState(false)
     const [listProduct, setListProduct] = useState([])
     const [loadingText, setLoadingText] = useState("Cargando")
+    const [renderComponent, setRenderComponent] = useState(null)
 
     const product = 'product'
 
@@ -58,9 +62,15 @@ export default function Carrito(){
         return value
     }
     
-    const compra =()=>{
-        //console.log("compra es:",listProduct)
-        console.log("cantidad es:",cantidad)
+    const compra = async()=>{
+        const dat = await datos(listProduct,cantidad)
+        setRenderComponent(
+            <CompraModal
+                datos={dat}
+                setShowModal={setShowModal}
+            />
+        )
+        setShowModal(true)
     }
 
     return(
@@ -86,6 +96,11 @@ export default function Carrito(){
                         onPress={()=>compra()}
                     />
                 </View>
+                {renderComponent && (
+                    <Modal isVisible={showModal} setIsVisible={setShowModal}>
+                        {renderComponent}
+                    </Modal>
+                )}
                 </>
             ):(
             <Text>No hay nada</Text>

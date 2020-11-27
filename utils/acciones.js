@@ -267,6 +267,30 @@ export const verificarImagenesEliminar = async (imagenesR,imagenesE) => {
   return imagenesUrl
 }
 
+export const datos = async (array,cantidad) =>{
+  let subt = 0
+  let items = []
+  for (let index = 0; index < size(array); index++) {
+    subt = (subt+(array[index].precio*cantidad[index]))
+    let item = {
+      id : array[index].id,
+      cantidad : cantidad[index]
+    }
+    items.push(item)
+  }
+  let iv = Number((subt * 0.12).toFixed(2))
+  let tot = subt + iv
+
+  let valor = {
+    subtotal: subt,
+    iva: iv,
+    total: tot,
+    items: items
+  }
+  
+  return valor
+}
+
 export const actualilzarPerfil = async (data) => {
   let respuesta = false;
   await firebase
