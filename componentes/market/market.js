@@ -128,7 +128,7 @@ export default function Market() {
         
         }
       
-        console.log(keys)
+        //console.log(keys)
     }
 
     getMyValue = async () => {
@@ -138,7 +138,7 @@ export default function Market() {
         } catch(e) {
           // read error
         }
-        console.log('Done',JSON.parse(value))
+        //console.log('Done',JSON.parse(value))
         setListProduct(JSON.parse(value))
         setTotal(size(JSON.parse(value)))
     }

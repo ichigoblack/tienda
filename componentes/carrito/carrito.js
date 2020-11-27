@@ -1,4 +1,4 @@
-import {size} from 'lodash'
+import {size,filter} from 'lodash'
 import Loading from '../loading'
 import {AntDesign} from '@expo/vector-icons'
 import {Image,Button,Rating} from 'react-native-elements'
@@ -14,6 +14,7 @@ export default function Carrito(){
     const [inf, setInf] = useState(null)
     const [total, setTotal] = useState(0)
     const [loading, setLoading] = useState(false)
+    const [cantidad, setCantidad] = useState([])
     const [listProduct, setListProduct] = useState([])
     const [loadingText, setLoadingText] = useState("Cargando")
 
@@ -34,7 +35,7 @@ export default function Carrito(){
             
         })()
     },[])
-
+    
     getMyValue = async () => {
         let value = []
         try {
@@ -44,8 +45,22 @@ export default function Carrito(){
         }
         setTotal(size(JSON.parse(value)))
         if(size(JSON.parse(value)) >0){
-            setListProduct(await verificarLista(JSON.parse(value))) 
+            setListProduct(await verificarLista(JSON.parse(value)))
+            setCantidad(await llenarCantidad(await verificarLista(JSON.parse(value))))
         }
+    }
+
+    llenarCantidad = async (array) => {
+        let value = []
+        for (let index = 0; index < size(array); index++) {
+            value.push(1)
+        }
+        return value
+    }
+    
+    const compra =()=>{
+        //console.log("compra es:",listProduct)
+        console.log("cantidad es:",cantidad)
     }
 
     return(
@@ -56,7 +71,9 @@ export default function Carrito(){
                     data={listProduct}
                     renderItem={(producto)=>(
                         <Producto
+                            cantidad={cantidad}
                             producto={producto}
+                            listProduct={listProduct}
                         />
                     )}
                     keyExtractor={(item,index)=>index.toString}
@@ -66,6 +83,7 @@ export default function Carrito(){
                         title="Realizar la compra"
                         containerStyle={{marginBottom:43,width:'80%'}}
                         buttonStyle={{backgroundColor:"#128c7e"}}
+                        onPress={()=>compra()}
                     />
                 </View>
                 </>
@@ -77,22 +95,34 @@ export default function Carrito(){
 }
 //<Loading isVisible={loading} text={loadingText}/>
 function Producto(props) {
-    const {producto} = props
-    const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
-    const [cantidad,setCantidad] = useState(1)
+    const {cantidad,producto} = props
+    const {id,precio,posicion,titulo,imagenes} = producto.item
+    const [count,setCount] = useState(1)
     
     const bajar = ()=>{
-        if(cantidad > 1){
-            setCantidad(cantidad-1)
+        if(cantidad[posicion] > 1){ 
+            cantidad[posicion] = cantidad[posicion]-1
+            setCount(count-1)
         }
     }
 
     const subir = ()=>{
-        if(cantidad < 100){
-            setCantidad(cantidad+1)
+        if(cantidad[posicion] < 99){
+            cantidad[posicion] = cantidad[posicion]+1
+            setCount(count+1)
         }
-        
     }
+
+    useEffect(()=>{
+        (async()=>{
+            //setCount(cantidad[posicion])
+            //console.log("posicion",listProduct.indexOf(producto))
+            //aconsole.log("se encontro",filter(listProduct,{id:id}))
+            //console.log("objeto",listProduct[posicion].cantidad)
+
+        })()
+    },[])
+
     return (
         <>
             <View style={styles.card}>
@@ -104,7 +134,7 @@ function Producto(props) {
                         <TouchableOpacity style={{marginRight:5}} onPress={()=>subir()}>
                             <AntDesign name="caretright" size={24} color="#128c7e" />
                         </TouchableOpacity>
-                        <Text style={styles.botonText}>{cantidad}</Text>
+                        <Text style={styles.botonText}>{count}</Text>
                         <TouchableOpacity style={{marginLeft:5}} onPress={()=>bajar()}>
                             <AntDesign name="caretleft" size={24} color="#128c7e" />
                         </TouchableOpacity>
@@ -184,3 +214,24 @@ const styles = StyleSheet.create({
         borderColor: "#128c7e",
     }
 })
+
+
+/*
+Diseño de la Solución
+
+Diagrama de Bloques
+Hardware
+Arquitectura
+Software
+Arquitectura
+Diagramas (Clases, Casos de Uso, Interacción, Flujo de Procesos, entre otros que considere que apliquen para su proyecto)
+Diseño de la Base de Datos
+La estructura propuesta es una referencia para el desarrollo de este avance. De acuerdo a cada proyecto considerar lo que mejor aplica. En el caso de existir una gran cantidad de diagramas, lo pueden ubicar en la sección de Anexos y citarlos desde el capítulo 2. Es importante que cada figura/tabla tenga un párrafo que explique en detalle el contenido. Recordar que es un avance por lo que no es necesario culminar con todos los diagramas.
+
+Si tienen alguna inquietud o comentario, la pueden hacer por los grupos privados de cada proyecto.}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}++++++++++++++++/////////5
+
+*/
+
+
+
+

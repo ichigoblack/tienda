@@ -216,8 +216,8 @@ export const verificarImagenes = async (imagenesR,imagenesE) => {
 
 export const verificarArray = async (array,dato) => {
   
-  console.log("value",dato)
-  console.log("listProduct",array)
+  //console.log("value",dato)
+  //console.log("listProduct",array)
   let verificador = false
 
   await Promise.all(
@@ -233,13 +233,17 @@ export const verificarArray = async (array,dato) => {
 export const verificarLista = async (array) => {
   let arrayE = []
   const list = await ListarProductos()
+  let cont = 0
   await Promise.all(
     map(array, async (a) => {
       map(list, async (b) => {
         if(a === b.id){
+          b.cantidad = 1
+          b.posicion = cont
           arrayE.push(b)
         }
       })
+      cont = cont+1
     })
   )
   return arrayE
