@@ -3,6 +3,7 @@ import Modal from '../Modal'
 import Loading from '../loading'
 import CompraModal from './compraModal'
 import {AntDesign} from '@expo/vector-icons'
+import {useFocusEffect} from '@react-navigation/native'
 import {Image,Button,Rating} from 'react-native-elements'
 import AsyncStorage from '@react-native-community/async-storage'
 import React,{useRef,useState,useEffect,useCallback} from 'react'
@@ -25,6 +26,7 @@ export default function Carrito(){
     useEffect(()=>{
         (async()=>{
             //setLoading(true)
+            console.log("useEffect carrito")
             await getMyValue()
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
@@ -38,15 +40,26 @@ export default function Carrito(){
         })()
         setReload(false)
     },[reload])
-    
-    getMyValue = async () => {
+
+    useFocusEffect(
+        useCallback(() => {
+        console.log('entre al carrito')
+        getMyValue()
+            return () => {
+               // console.log('Screen was unfocused')
+            }
+        }, [])
+    )
+
+    const getMyValue = async () => {
         let value = []
         try {
            value = await AsyncStorage.getItem("producto")
         } catch(e) {
           // read error
         }
-        console.log("resutado es",JSON.parse(value))
+        console.log("value",value)
+        console.log('Done',JSON.parse(value))
         setTotal(size(JSON.parse(value)))
         if(size(JSON.parse(value)) >0){
             setListProduct(await verificarLista(JSON.parse(value)))
@@ -87,7 +100,7 @@ export default function Carrito(){
                             listProduct={listProduct}
                         />
                     )}
-                    keyExtractor={(item,index)=>index.toString}
+                    keyExtractor={(item,index)=>index.toString()}
                 />
                 <View style={{alignItems:'center'}}>
                     <Button

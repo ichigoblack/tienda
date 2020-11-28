@@ -469,7 +469,7 @@ export const obternerRegistroxID = async (coleccion, documento) => {
 
 export const ListarProductos = async () => {
   const productoslist = []
-  let index = 0;
+  //let index = 0;
   await db
     .collection("productos")
     .where("status", "==", 1)

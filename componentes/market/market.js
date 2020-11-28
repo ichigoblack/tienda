@@ -26,6 +26,7 @@ export default function Market() {
     const [productlist, setproductlist] = useState([])
     const [mensajes, setmensajes] = useState("Cargando...")
     const [notificaciones, setnotificaciones] = useState(0)
+    const [renderComponent, setRenderComponent] = useState(null)
     const [notificacionesCompra, setnotificacionesCompra] = useState(0)
 
     const hideMenu = () => menu.current.hide()
@@ -37,7 +38,7 @@ export default function Market() {
 
     useEffect(()=>{
         (async()=>{
-            console.log("useEffect")
+            console.log("useEffect market")
             getAllKeys()
             getMyValue()
             setproductlist(await ListarProductos())
@@ -53,11 +54,11 @@ export default function Market() {
 
     useFocusEffect(
         useCallback(() => {
-            (async () => {
-                console.log("useFocusEffect")
-                await getMyValue()
-                setproductlist(await ListarProductos())
-            })()
+        console.log('entre al market')
+        getMyValue()
+            return () => {
+                //console.log('Screen was unfocused')
+            }
         }, [])
     )
 
@@ -72,14 +73,15 @@ export default function Market() {
         //console.log(keys)
     }
 
-    getMyValue = async () => {
+    const getMyValue = async () => {
         let value = []
         try {
            value = await AsyncStorage.getItem("producto")
         } catch(e) {
           // read error
         }
-        console.log('Done',JSON.parse(value))
+        console.log("valor",value)
+        console.log('Node',JSON.parse(value))
         if(JSON.parse(value) === null){
             const pl = []
             setListProduct(pl)
@@ -226,6 +228,8 @@ export default function Market() {
                             showModal={showModal}
                             listProduct={listProduct}
                             setShowModal={setShowModal}
+                            renderComponent={renderComponent}
+                            setRenderComponent={setRenderComponent}
                         />
                     )}
                     keyExtractor={(item,index)=>index.toString()}
@@ -233,16 +237,21 @@ export default function Market() {
             ):(
             <Text>{mensajes}</Text>
             )}
+            {renderComponent && (
+              <Modal isVisible={showModal} setIsVisible={setShowModal}>
+                {renderComponent}
+              </Modal>
+            )}
         </View>
     )
 }
 
 function Producto(props) {
-    const {usuario,producto,setTotal,showModal,listProduct,setShowModal} = props
-    const {precio,rating,titulo,imagenes,descripcion} = producto.item
-    const [renderComponent, setRenderComponent] = useState(null)
+    const {usuario,producto,setTotal,showModal,listProduct,setShowModal,renderComponent,setRenderComponent} = props
+    const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
     const detalle = async () => {
+        console.log("id",id)
         setRenderComponent(
             <Detalle
                 usuario={usuario} producto={producto} showModal={showModal}
@@ -274,11 +283,6 @@ function Producto(props) {
                     />
                 </View>
             </View>
-            {renderComponent && (
-              <Modal isVisible={showModal} setIsVisible={setShowModal}>
-                {renderComponent}
-              </Modal>
-            )}
         </>
     )
 }
