@@ -1,15 +1,57 @@
-import * as firebase from 'firebase'
+import Loading from '../loading'
 import React,{useState} from 'react'
-import {validaremail} from '../../utils/utils'
-import {Text,View,StyleSheet} from 'react-native'
-import {Input,Button} from 'react-native-elements'
-import {reauthenticate} from '../../utils/acciones'
+import {Button} from 'react-native-elements'
+import {Text,View,Alert,StyleSheet} from 'react-native'
+import {addRegistro,numberOrden} from '../../utils/acciones'
+import AsyncStorage from '@react-native-community/async-storage'
 
 export default function compraModal(props) {
 
-    const {datos,setShowModal} = props
-    const [isLoading, setIsLoading] = useState(false)
+    const {datos,setReload,setShowModal} = props
+    const [loading, setloading] = useState(false)
 
+    const generarCompra=async()=>{
+        setloading(true)
+        datos.numero = await numberOrden()
+        //console.log("numero",datos.numero)
+        //setShowModal(false)
+        const registrar = await addRegistro("orden", datos)
+        if (registrar.statusreponse) {
+            setloading(false)
+            Alert.alert(
+                "Registro Exitoso",
+                "La orden se ha registrado correctamente",
+                [{
+                    style: "cancel",
+                    text: "Aceptar",
+                        onPress: async() => {
+                            await clearAllStorage()
+                            setReload(true)
+                            setShowModal(false)
+                        }
+                }]
+            )
+          } else {
+            setloading(false)
+            Alert.alert(
+                "Registro Fallido",
+                "Ha ocurrido un error al registrar orden",
+                [{
+                    style: "cancel",
+                    text: "Aceptar",
+                }]
+            )
+        }
+    }
+
+    const clearAllStorage = async () => {
+        try {
+          await AsyncStorage.removeItem("producto")
+          //alert('Storage successfully cleared!')
+        } catch (e) {
+          alert('Failed to clear the async storage.')
+        }
+    }
 
     return (
         <View style={styles.view}>
@@ -41,9 +83,9 @@ export default function compraModal(props) {
                 title="Finalizar Compra"
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btn}
-                //onPress={onSubmit}
-                //loading={isLoading}
+                onPress={()=>generarCompra()}
             />
+            <Loading isVisible={loading} text="Se esta registrando su pedido" />
         </View>
     )
 }

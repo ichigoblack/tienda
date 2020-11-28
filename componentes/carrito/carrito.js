@@ -15,14 +15,12 @@ export default function Carrito(){
     const usuario = ObtenerUsuario()
     const [inf, setInf] = useState(null)
     const [total, setTotal] = useState(0)
-    const [loading, setLoading] = useState(false)
+    const [reload, setReload] = useState(false)
     const [cantidad, setCantidad] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [listProduct, setListProduct] = useState([])
-    const [loadingText, setLoadingText] = useState("Cargando")
     const [renderComponent, setRenderComponent] = useState(null)
 
-    const product = 'product'
 
     useEffect(()=>{
         (async()=>{
@@ -38,7 +36,8 @@ export default function Carrito(){
              })
             
         })()
-    },[])
+        setReload(false)
+    },[reload])
     
     getMyValue = async () => {
         let value = []
@@ -47,6 +46,7 @@ export default function Carrito(){
         } catch(e) {
           // read error
         }
+        console.log("resutado es",JSON.parse(value))
         setTotal(size(JSON.parse(value)))
         if(size(JSON.parse(value)) >0){
             setListProduct(await verificarLista(JSON.parse(value)))
@@ -63,10 +63,11 @@ export default function Carrito(){
     }
     
     const compra = async()=>{
-        const dat = await datos(listProduct,cantidad)
+        const dat = await datos(listProduct,cantidad,usuario.uid)
         setRenderComponent(
             <CompraModal
                 datos={dat}
+                setReload={setReload}
                 setShowModal={setShowModal}
             />
         )

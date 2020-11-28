@@ -3,17 +3,15 @@ import Modal from '../Modal'
 import Detalle from './detalle'
 import Busqueda from '../busqueda'
 import {useFocusEffect} from '@react-navigation/native'
-import {Icon,Badge,Image,Button,Rating} from 'react-native-elements'
 import AsyncStorage from '@react-native-community/async-storage'
 import React,{useRef,useState,useEffect,useCallback} from 'react'
 import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
+import {Icon,Badge,Image,Button,Rating} from 'react-native-elements'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
 import {ObtenerUsuario,verificarLista,
         obtenerDatosUsuario,ListarProductos,
         ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
-
-//import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 export default function Market() {
     
@@ -37,14 +35,9 @@ export default function Market() {
         foto:require("../../assets/avatar.jpg")
     }
 
-    const product = 'product'
-
     useEffect(()=>{
         (async()=>{
             console.log("useEffect")
-            //await readData(product)
-            //getAllData()
-            //await clearAllStorage()
             getAllKeys()
             getMyValue()
             setproductlist(await ListarProductos())
@@ -62,63 +55,11 @@ export default function Market() {
         useCallback(() => {
             (async () => {
                 console.log("useFocusEffect")
-                setnotificaciones(0)
+                await getMyValue()
                 setproductlist(await ListarProductos())
-                const consulta = await ListarNotificaciones()
-                if (consulta.statusresponse) {
-                    setnotificaciones(size(consulta.data))
-                }
             })()
         }, [])
     )
-
-    const readData = async (STORAGE_KEY) => {
-        try {
-            await AsyncStorage.getItem(STORAGE_KEY)
-            .then((result)=>{console.log(result)})
-            .catch((err)=>{console.log(err)})
-      
-          
-        } catch (e) {
-            alert('Failed to fetch the data from storage')
-        }
-    }
-
-    const clearStorage = async (key) => {
-        try {
-            await AsyncStorage.removeItem(key)
-            console.log('Storage successfully cleared!')
-        } catch (e) {
-            console.log('Failed to clear the async storage.')
-        }
-    }
-
-    const clearAllStorage = async () => {
-        try {
-          await AsyncStorage.clear()
-          alert('Storage successfully cleared!')
-        } catch (e) {
-          alert('Failed to clear the async storage.')
-        }
-    }
-
-    const getAllData = () =>{
-        AsyncStorage.getAllKeys().then((keys) => {
-          return AsyncStorage.multiGet(keys)
-            .then(async(result) => {
-                console.log("result",size(result))
-                console.log("result",result)
-                //console.log("result",JSON.parse(result))
-                //if(size(result)>0){
-                   // await verificarLista(JSON.parse(result))
-                    // setListProduct(JSON.parse(result[1][1]))
-                   // setTotal(size(JSON.parse(result[1][1])))
-               // }
-            }).catch((e) =>{
-                console.log(e)
-            })
-        })
-    }
 
     const getAllKeys = async () => {
         let keys = []
@@ -138,9 +79,15 @@ export default function Market() {
         } catch(e) {
           // read error
         }
-        //console.log('Done',JSON.parse(value))
-        setListProduct(JSON.parse(value))
-        setTotal(size(JSON.parse(value)))
+        console.log('Done',JSON.parse(value))
+        if(JSON.parse(value) === null){
+            const pl = []
+            setListProduct(pl)
+            setTotal(size(pl))
+        }else{
+            setListProduct(JSON.parse(value))
+            setTotal(size(JSON.parse(value)))
+        }
     }
 
     const cargarFiltroxCategoria = async (categoria) => {
@@ -272,20 +219,16 @@ export default function Market() {
                 <FlatList
                     data={productlist}
                     renderItem={(producto)=>(
-                        <Producto 
-                            total={total}
+                        <Producto
                             usuario={inf}
                             producto={producto}
                             setTotal={setTotal}
                             showModal={showModal}
                             listProduct={listProduct}
-                            productlist={productlist}
                             setShowModal={setShowModal}
-                            setListProduct={setListProduct}
-                            setproductlist={setproductlist}
                         />
                     )}
-                    keyExtractor={(item,index)=>index.toString}
+                    keyExtractor={(item,index)=>index.toString()}
                 />
             ):(
             <Text>{mensajes}</Text>
@@ -295,18 +238,15 @@ export default function Market() {
 }
 
 function Producto(props) {
-    const {total,usuario,producto,setTotal,showModal,listProduct,productlist,setShowModal,setListProduct,setproductlist} = props
-    const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
+    const {usuario,producto,setTotal,showModal,listProduct,setShowModal} = props
+    const {precio,rating,titulo,imagenes,descripcion} = producto.item
     const [renderComponent, setRenderComponent] = useState(null)
 
     const detalle = async () => {
         setRenderComponent(
             <Detalle
-                total={total} usuario={usuario} 
-                producto={producto}  setTotal={setTotal}
-                showModal={showModal} listProduct={listProduct} 
-                productlist={productlist} setShowModal={setShowModal} 
-                setListProduct={setListProduct} setproductlist={setproductlist}
+                usuario={usuario} producto={producto} showModal={showModal}
+                setTotal={setTotal} listProduct={listProduct} setShowModal={setShowModal} 
             />
         )
         setShowModal(true)

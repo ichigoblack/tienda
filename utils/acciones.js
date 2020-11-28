@@ -267,7 +267,7 @@ export const verificarImagenesEliminar = async (imagenesR,imagenesE) => {
   return imagenesUrl
 }
 
-export const datos = async (array,cantidad) =>{
+export const datos = async (array,cantidad,id) =>{
   let subt = 0
   let items = []
   for (let index = 0; index < size(array); index++) {
@@ -282,10 +282,12 @@ export const datos = async (array,cantidad) =>{
   let tot = subt + iv
 
   let valor = {
-    subtotal: subt,
     iva: iv,
+    numero: 0,
     total: tot,
-    items: items
+    usuario: id,
+    items: items,
+    subtotal: subt,
   }
   
   return valor
@@ -344,14 +346,12 @@ export const addRegistro = async (colecion, data) => {
     })
     .catch((err) => {
       resultado.error = err;
-    });
-
-  return resultado;
-};
+    })
+  return resultado
+}
 
 export const ListarMisProductos = async () => {
   let productos = [];
-
   await db
     .collection("productos")
     .where("usuario", "==", ObtenerUsuario().uid)
@@ -369,7 +369,26 @@ export const ListarMisProductos = async () => {
     });
 
   return productos;
-};
+}
+
+export const numberOrden = async () => {
+  let cantidad = 0
+  let orden = []
+  await db
+    .collection("orden")
+    .get()
+    .then((response) => {
+      response.forEach((doc) => {
+        const ord = doc.data()
+        orden.push(ord)
+      })
+    })
+    .catch((err) => {
+      console.log("error");
+    })
+    cantidad = size(orden)+1
+  return cantidad
+}
 
 export const actualizarRegistro = async (coleccion, documento, data) => {
   let response = { statusresponse: false };
@@ -449,7 +468,7 @@ export const obternerRegistroxID = async (coleccion, documento) => {
 };
 
 export const ListarProductos = async () => {
-  const productoslist = [];
+  const productoslist = []
   let index = 0;
   await db
     .collection("productos")

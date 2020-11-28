@@ -12,7 +12,7 @@ const product = 'ListaProducto'
 
 export default function Detalle(props) {
 
-    const {total,usuario,producto,setTotal,showModal,listProduct,setShowModal,setListProduct,setproductlist} = props
+    const {usuario,producto,setTotal,showModal,listProduct,setShowModal} = props
     const {tipo} = usuario
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
@@ -27,8 +27,7 @@ export default function Detalle(props) {
     const product = 'producto'
 
     const saveArticle = async (key, value) =>{
-        if(size(listProduct)>0){
-            //clearStorage(key)          
+        if(size(listProduct)>0){          
             await verificarArray(listProduct,value)
             .then(async(result)=>{
                  if(result){
@@ -61,17 +60,6 @@ export default function Detalle(props) {
             })
         }
      }
-
-    const getAllData = () =>{
-        AsyncStorage.getAllKeys().then((keys) => {
-          return AsyncStorage.multiGet(keys)
-            .then((result) => {
-                console.log(result)
-            }).catch((e) =>{
-                console.log(e)
-            })
-        })
-    }
 
     const clearStorage = async (key) => {
         try {
