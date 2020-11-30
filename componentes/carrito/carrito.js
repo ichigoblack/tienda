@@ -1,4 +1,4 @@
-import {size,filter} from 'lodash'
+import {size} from 'lodash'
 import Modal from '../Modal'
 import Loading from '../loading'
 import CompraModal from './compraModal'
@@ -31,7 +31,7 @@ export default function Carrito(){
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
                 setInf(result)
-                //setLoading(false)
+                //setLoading(f  alse)
              })
              .catch((err) => {
                 console.log("err",err)
@@ -82,6 +82,8 @@ export default function Carrito(){
                 datos={dat}
                 setReload={setReload}
                 setShowModal={setShowModal}
+                token={listProduct[0].token}
+                nombre={listProduct[0].nombre}
             />
         )
         setShowModal(true)

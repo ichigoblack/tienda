@@ -2,11 +2,11 @@ import {size} from 'lodash'
 import Modal from '../Modal'
 import Detalle from './detalle'
 import Busqueda from '../busqueda'
-import {useFocusEffect} from '@react-navigation/native'
 import AsyncStorage from '@react-native-community/async-storage'
 import React,{useRef,useState,useEffect,useCallback} from 'react'
 import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
 import {Icon,Badge,Image,Button,Rating} from 'react-native-elements'
+import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
 import {ObtenerUsuario,verificarLista,
@@ -17,6 +17,9 @@ export default function Market() {
     
     const menu = useRef()
     const usuario = ObtenerUsuario()
+    const [bot, setBot] = useState(0) 
+    const [not, setNot] = useState(0) 
+    const navigation = useNavigation()
     const [inf, setInf] = useState(null)
     const [total, setTotal] = useState(0)
     const [search, setsearch] = useState("")
@@ -27,7 +30,6 @@ export default function Market() {
     const [mensajes, setmensajes] = useState("Cargando...")
     const [notificaciones, setnotificaciones] = useState(0)
     const [renderComponent, setRenderComponent] = useState(null)
-    const [notificacionesCompra, setnotificacionesCompra] = useState(0)
 
     const hideMenu = () => menu.current.hide()
     const showMenu = () => menu.current.show()
@@ -38,13 +40,20 @@ export default function Market() {
 
     useEffect(()=>{
         (async()=>{
-            console.log("useEffect market")
-            getAllKeys()
             getMyValue()
             setproductlist(await ListarProductos())
             await obtenerDatosUsuario(usuario.uid)
-            .then((result) => {
+            .then(async(result) => {
                 setInf(result)
+                if(result.rol === "admin"){
+                    setNot(1)
+                    const consulta = await ListarNotificaciones()
+                    if(consulta.statusresponse){
+                        setnotificaciones(consulta.total)
+                    }
+                }else{
+                    setBot(1)
+                }
              })
              .catch((err) => {
                 console.log("err",err)
@@ -54,24 +63,30 @@ export default function Market() {
 
     useFocusEffect(
         useCallback(() => {
-        console.log('entre al market')
-        getMyValue()
+            async()=>{
+            await obtenerDatosUsuario(usuario.uid)
+            .then(async(result) => {
+                setInf(result)
+                if(result.rol === "admin"){
+                    setNot(1)
+                    const consulta = await ListarNotificaciones()
+                    if(consulta.statusresponse){
+                        setnotificaciones(consulta.total)
+                    }
+                }else{
+                    setBot(1)
+                }
+            })
+            .catch((err) => {
+                console.log("err",err)
+            })
+            getMyValue()
+        } 
             return () => {
                 //console.log('Screen was unfocused')
             }
         }, [])
     )
-
-    const getAllKeys = async () => {
-        let keys = []
-        try {
-          keys = await AsyncStorage.getAllKeys()
-        } catch(e) {
-        
-        }
-      
-        //console.log(keys)
-    }
 
     const getMyValue = async () => {
         let value = []
@@ -80,8 +95,6 @@ export default function Market() {
         } catch(e) {
           // read error
         }
-        console.log("valor",value)
-        console.log('Node',JSON.parse(value))
         if(JSON.parse(value) === null){
             const pl = []
             setListProduct(pl)
@@ -115,42 +128,47 @@ export default function Market() {
                         />
                         <Text style={{fontSize:24}}>Mi Tienda</Text>
                         <View style={{marginLeft:30,flexDirection: "row"}}>
-                            <Icon
-                                size={35}
-                                color="#fff"
-                                name="bell-outline"
-                                type="material-community"
-                                style={{marginRight:20}}
-                                //onPress={() => {navigation.navigate("mensajes")}}
-                            />
-                            {notificaciones > 0 && (
-                               <Badge
-                                    status="error"
-                                    value={notificaciones}
-                                    containerStyle={{ position: "absolute", top: -4, right: -10 }}
-                                /> 
+                            {not === 1 &&(
+                                <>
+                                <Icon
+                                    size={35}
+                                    color="#fff"
+                                    name="bell-outline"
+                                    type="material-community"
+                                    onPress={() => {navigation.navigate("notificaciones")}}
+                                />
+                                {notificaciones > 0 && (
+                                    <Badge
+                                        status="error"
+                                        value={notificaciones}
+                                        containerStyle={{ position: "absolute", top: -4, right: 0 }}
+                                    /> 
+                                )}
+                                </>
                             )}
-                            <Menu 
-                                ref={menu} 
-                                button={
-                                    <Icon
-                                        size={35}
-                                        color="#fff"
-                                        onPress={showMenu}
-                                        name="cart-outline"
-                                        type="material-community"
-                                    />
-                                }
-                                style={{width:110}}
-                            >
-                                <MenuItem onPress={hideMenu}>
-                                    <Text style={{color:'#128c7e',fontSize:18}}>Items</Text>                                                                 11111
-                                </MenuItem>
-                                <MenuDivider />
-                                <MenuItem onPress={hideMenu}>
-                                    <Text style={{fontSize:16}}>Total: {total}</Text>
-                                </MenuItem>
-                            </Menu>
+                            {bot === 1 &&(
+                                <Menu 
+                                    ref={menu} 
+                                    button={
+                                        <Icon
+                                            size={35}
+                                            color="#fff"
+                                            onPress={showMenu}
+                                            name="cart-outline"
+                                            type="material-community"
+                                        />
+                                    }
+                                    style={{width:110}}
+                                >
+                                    <MenuItem onPress={hideMenu}>
+                                        <Text style={{color:'#128c7e',fontSize:18}}>Items</Text>                                                                 11111
+                                    </MenuItem>
+                                    <MenuDivider />
+                                    <MenuItem onPress={hideMenu}>
+                                        <Text style={{fontSize:16}}>Total: {total}</Text>
+                                    </MenuItem>
+                                </Menu>
+                            )}
                         </View>
                     </View>          
                     <Busqueda
@@ -251,7 +269,6 @@ function Producto(props) {
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
     const detalle = async () => {
-        console.log("id",id)
         setRenderComponent(
             <Detalle
                 usuario={usuario} producto={producto} showModal={showModal}

@@ -2,12 +2,12 @@ import Loading from '../loading'
 import React,{useState} from 'react'
 import {Button} from 'react-native-elements'
 import {Text,View,Alert,StyleSheet} from 'react-native'
-import {addRegistro,numberOrden} from '../../utils/acciones'
 import AsyncStorage from '@react-native-community/async-storage'
+import {addRegistro,numberOrden,sendPushNotification,setMensajeNotificacion} from '../../utils/acciones'
 
 export default function compraModal(props) {
 
-    const {datos,setReload,setShowModal} = props
+    const {datos,token,nombre,setReload,setShowModal} = props
     const [loading, setloading] = useState(false)
 
     const generarCompra=async()=>{
@@ -15,6 +15,7 @@ export default function compraModal(props) {
         datos.numero = await numberOrden()
         //console.log("numero",datos.numero)
         //setShowModal(false)
+        //console.log("token",token)
         const registrar = await addRegistro("orden", datos)
         if (registrar.statusreponse) {
             setloading(false)
@@ -25,6 +26,13 @@ export default function compraModal(props) {
                     style: "cancel",
                     text: "Aceptar",
                         onPress: async() => {
+                            const mensajenotificacion = setMensajeNotificacion(
+                                token,
+                                `Orden numero - ${datos.numero}`,
+                                `${nombre}, te ha enviado un mensaje`,
+                                { data: "Lista de pedido enviada" }
+                            )
+                            const respuesta = await sendPushNotification(mensajenotificacion)
                             await clearAllStorage()
                             setReload(true)
                             setShowModal(false)

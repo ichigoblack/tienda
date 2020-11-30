@@ -46,11 +46,11 @@ export const cerrarsesion = () => {
 
 export const validarPhone = (setphoneauth) => {
   db.collection("Usuarios")
-    .doc(ObtenerUsuario().uid)
-    .onSnapshot((snapshot) => {
-      setphoneauth(snapshot.exists);
-    });
-};
+  .doc(ObtenerUsuario().uid)
+  .onSnapshot((snapshot) => {
+    setphoneauth(snapshot.exists)
+  })
+}
 
 export const enviarconfirmacionphone = async (numero, recapcha) => {
   let verificationid = "";
@@ -238,7 +238,6 @@ export const verificarLista = async (array) => {
     map(array, async (a) => {
       map(list, async (b) => {
         if(a === b.id){
-          b.cantidad = 1
           b.posicion = cont
           arrayE.push(b)
         }
@@ -268,15 +267,19 @@ export const verificarImagenesEliminar = async (imagenesR,imagenesE) => {
 }
 
 export const datos = async (array,cantidad,id) =>{
+  let cont = 1
   let subt = 0
   let items = []
   for (let index = 0; index < size(array); index++) {
     subt = (subt+(array[index].precio*cantidad[index]))
     let item = {
-      id : array[index].id,
-      cantidad : cantidad[index]
+      numero: cont,
+      id: array[index].id,
+      cantidad: cantidad[index],
+      nombre: array[index].titulo,
     }
     items.push(item)
+    cont++
   }
   let iv = Number((subt * 0.12).toFixed(2))
   let tot = subt + iv
@@ -288,6 +291,8 @@ export const datos = async (array,cantidad,id) =>{
     usuario: id,
     items: items,
     subtotal: subt,
+    estado: "pendiente",
+    fechacreacion: new Date(),
   }
   
   return valor
@@ -435,19 +440,19 @@ export const eliminarProducto = async (coleccion, documento) => {
 }
 
 export const obtenerDatosUsuario = async (documento) => {
-  let response = {};
+  let response = {}
   await db
     .collection("users")
     .doc(documento)
     .get()
     .then((result) => {
-      response = result.data();
+      response = result.data()
     })
     .catch((err) => {
-      console.log(err);
-    });
-  return response;
-};
+      console.log(err)
+    })
+  return response
+}
 
 export const obternerRegistroxID = async (coleccion, documento) => {
   let response = { statusresponse: false, data: null };
@@ -469,7 +474,7 @@ export const obternerRegistroxID = async (coleccion, documento) => {
 
 export const ListarProductos = async () => {
   const productoslist = []
-  //let index = 0;
+  let index = 0
   await db
     .collection("productos")
     .where("status", "==", 1)
@@ -482,18 +487,18 @@ export const ListarProductos = async () => {
       })
     })
     .catch((err) => console.log(err))
-  /*for (const registro of productoslist) {
-    const usuario = await obternerRegistroxID("users", registro.usuario);
-    productoslist[index].usuario = usuario.data
-    index++
-  }*/
+    for (const registro of productoslist) {
+      const usuario = await obtenerDatosUsuario(registro.usuario)
+      productoslist[index].token = usuario.token
+      productoslist[index].nombre = usuario.nombre
+      index++
+    }
   return productoslist
 }
 
 export const listarProductosxCategoria = async (categoria) => {
-  const productoslist = [];
-  let index = 0;
-
+  const productoslist = []
+  let index = 0
   await db
     .collection("productos")
     .where("status", "==", 1)
@@ -501,21 +506,20 @@ export const listarProductosxCategoria = async (categoria) => {
     .get()
     .then((response) => {
       response.forEach((doc) => {
-        const producto = doc.data();
-        producto.id = doc.id;
-        productoslist.push(producto);
-      });
+        const producto = doc.data()
+        producto.id = doc.id
+        productoslist.push(producto)
+      })
     })
-    .catch((err) => console.log(err));
-
+    .catch((err) => console.log(err))
   for (const registro of productoslist) {
-    const usuario = await obternerRegistroxID("Usuarios", registro.usuario);
-    productoslist[index].usuario = usuario.data;
-    index++;
+    const usuario = await obtenerDatosUsuario(registro.usuario)
+    productoslist[index].token = usuario.token
+    productoslist[index].nombre = usuario.nombre
+    index++
   }
-
-  return productoslist;
-};
+  return productoslist
+}
 
 export const Buscar = async (search) => {
   let productos = []
@@ -573,18 +577,34 @@ export const setMensajeNotificacion = (token, titulo, body, data) => {
     title: titulo,
     body: body,
     data: data,
-  };
-
+  }
   return message;
-};
+}
 
 export const ListarNotificaciones = async () => {
-  let respuesta = { statusresponse: false, data: [] }
-  let index = 0
+  let respuesta = { statusresponse: false, total: 0 }
+  //let index = 0
   await db
-    .collection("Notificaciones")
-    .where("receiver", "==", ObtenerUsuario().uid)
-    .where("visto", "==", 0)
+    .collection("orden")
+    .where("estado", "==", "pendiente")
+    .get()
+    .then((response) => {
+      let num = 0
+      response.forEach((doc) => {
+        num = num + 1
+      })
+      respuesta.total = num
+      respuesta.statusresponse = true
+    })
+  return respuesta
+}
+
+export const ListarOrdenes = async () => {
+  let respuesta = { statusresponse: false, data: [] }
+  let index = 0;
+  await db
+    .collection("orden")
+    .where("estado", "==", "pendiente")
     .get()
     .then((response) => {
       let datos
@@ -595,10 +615,12 @@ export const ListarNotificaciones = async () => {
       })
       respuesta.statusresponse = true
     })
+
   for (const notificacion of respuesta.data) {
-    const usuario = await obternerRegistroxID("Usuarios", notificacion.sender)
-    respuesta.data[index].sender = usuario.data
+    const usuario = await obtenerDatosUsuario(notificacion.usuario)
+    respuesta.data[index].user = usuario
     index++
   }
-  return respuesta
+
+  return respuesta;
 }

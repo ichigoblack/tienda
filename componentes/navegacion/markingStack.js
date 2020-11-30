@@ -3,7 +3,8 @@ import {View,StyleSheet} from 'react-native'
 import {createStackNavigator} from '@react-navigation/stack'
 
 import Tienda from '../market/market'
-import Detalle from '../market/detalle'
+import Mensaje from '../market/mensaje'
+import Notificacion from '../market/notificaciones'
 
 const Stack = createStackNavigator()
 
@@ -17,12 +18,21 @@ export default function TiendaStack() {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                    component={Detalle}
-                    name="detalle"
+                    component={Notificacion}
+                    name="notificaciones"
                     options={{
-                        headerTransparent: true,
-                        headerTintColor: "#128C7E",
-                        title: "",
+                        title: "Notificaciones",
+                        headerStyle: { backgroundColor: "#128C7E" ,height:60},
+                        headerTintColor: "#fff",
+                    }}
+                />
+                <Stack.Screen
+                    component={Mensaje}
+                    name="mensaje"
+                    options={{
+                        title: "Informacion",
+                        headerStyle: { backgroundColor: "#128C7E" ,height:60},
+                        headerTintColor: "#fff",
                     }}
                 />
             </Stack.Navigator>

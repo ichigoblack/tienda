@@ -39,8 +39,10 @@ export default function RegistroForm(props) {
             token:"",
             codigo:"",
             tipo:false,
+            email:email,
             telefono:"",
             direccion:"",
+            rol:"cliente",
             nombre:"usuario",
             telefonoAuth:false,
           }

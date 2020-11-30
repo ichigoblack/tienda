@@ -41,7 +41,7 @@ export const convertirFicheroBlob = async (rutafisica) => {
 
 export const enviarWhatsapp = (numero, text) => {
   let link = `whatsapp://send?phone=${numero.substring(
-    1,
+    0,
     size(numero)
   )}&text=${text}`;
   Linking.canOpenURL(link).then((supported) => {

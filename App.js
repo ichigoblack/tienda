@@ -1,7 +1,7 @@
 import {LogBox} from 'react-native'
 import {encode,decode} from 'base-64'
-import {validarsesion} from './utils/acciones'
-import React,{useState,useEffect} from 'react'
+import React,{useRef,useState,useEffect} from 'react'
+import {validarsesion,iniciarnotificaciones} from './utils/acciones'
 import RutasAutenticadas from './componentes/navegacion/rutasAutenticadas'
 import RutasNoAutenticadas from './componentes/navegacion/rutasNoAutenticadas'
 
@@ -24,10 +24,14 @@ LogBox.ignoreLogs([
 
 export default function App() {
   
+  const responseListener = useRef()
+  const notificationListener = useRef()
   const [user, setuser] = useState(false)
+
 
   useEffect(() => {
     validarsesion(setuser)
+    iniciarnotificaciones(notificationListener,responseListener)
   }, [])
 
   return user ? <RutasAutenticadas /> : <RutasNoAutenticadas />
