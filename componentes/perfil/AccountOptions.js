@@ -3,7 +3,7 @@ import Modal from '../Modal'
 import Loading from '../loading'
 import React,{useState} from 'react'
 import {View,StyleSheet} from 'react-native'
-import {ListItem} from 'react-native-elements'
+import {Icon,ListItem} from 'react-native-elements'
 import ChangeEmailForm from './ChangeEmailForm'
 import ChangePhoneForm from './ChangePhoneForm'
 import ChangeDisplayNameForm from './editarPerfil'
@@ -73,22 +73,13 @@ export default function AccountOptions(props) {
     return(
         <View>
             {map(menuOptions,(menu,index)=>(
-                <ListItem
-                    key={index}
-                    title={menu.title}
-                    leftIcon={{
-                        type: menu.iconType,
-                        name: menu.iconNameLeft,
-                        color: menu.iconColorLeft,
-                    }}
-                    rightIcon={{
-                        type: menu.iconType,
-                        name: menu.iconNameRight,
-                        color: menu.iconColorRight,
-                    }}
-                    onPress={menu.onPress}
-                    containerStyle={styles.menuItem}
-                />
+                <ListItem key={index} bottomDivider onPress={menu.onPress}>
+                  <Icon type={menu.iconType} name={menu.iconNameLeft} color={menu.iconColor}/>
+                  <ListItem.Content>
+                    <ListItem.Title>{menu.title}</ListItem.Title>
+                  </ListItem.Content>
+                  <ListItem.Chevron color={menu.iconColor} size={24}/>
+                </ListItem>
             ))}
             {renderComponent && (
               <Modal isVisible={showModal} setIsVisible={setShowModal}>
@@ -104,38 +95,30 @@ function generateOptions(selectedComponent){
     return [
         {
             title: "Datos",
+            iconColor: "#128c7e",
             iconType: "material-community",
             iconNameLeft: "account-circle",
-            iconColorLeft: "#128c7e",
-            iconNameRight: "chevron-right",
-            iconColorRight: "#128c7e",
             onPress: () => selectedComponent("datos")
         },
         {
             title: "Correo",
-            iconType: "material-community",
+            iconColor: "#128c7e",
             iconNameLeft: "email",
-            iconColorLeft: "#128c7e",
-            iconNameRight: "chevron-right",
-            iconColorRight: "#128c7e",
+            iconType: "material-community",
             onPress: () => selectedComponent("correo")
         },
         {
             title: "Telefono",
-            iconType: "material-community",
+            iconColor: "#128c7e",
             iconNameLeft: "cellphone",
-            iconColorLeft: "#128c7e",
-            iconNameRight: "chevron-right",
-            iconColorRight: "#128c7e",
+            iconType: "material-community",
             onPress: () => selectedComponent("telefono")
         },
         {
             title: "Contraseña",
-            iconType: "material-community",
+            iconColor: "#128c7e",
             iconNameLeft: "lock",
-            iconColorLeft: "#128c7e",
-            iconNameRight: "chevron-right",
-            iconColorRight: "#128c7e",
+            iconType: "material-community",
             onPress: () => selectedComponent("contraseña")
         },
     ]

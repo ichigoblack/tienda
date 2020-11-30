@@ -5,7 +5,7 @@ import AccountOptions from './AccountOptions'
 import {FontAwesome5} from '@expo/vector-icons'
 import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
-import {View,Text,StyleSheet} from 'react-native'
+import {View,Text,Alert,StyleSheet} from 'react-native'
 import {Avatar,Button} from 'react-native-elements'
 import React,{useRef,useEffect,useState} from 'react'
 import {useNavigation} from '@react-navigation/native'
@@ -136,6 +136,21 @@ export default function Perfil () {
       return imageBlob
    }
 
+   const finalizar=()=>{
+      Alert.alert(
+         "Actualización completa",
+         "El producto se ha actualizado correctamente",
+         [{
+            style: "cancel",
+            text: "Cancelar",
+         },{
+            style: "cancel",
+            text: "Salir",
+            onPress: () => cerrarsesion(),
+         }]
+      )
+   }
+
    return (
      <View style={styles.container}>
          <CabeceraBG nombre={nombre}/>
@@ -145,7 +160,7 @@ export default function Perfil () {
             icon={<FontAwesome5 name="door-open" size={24} color="#128c7e" />}
             iconRight
             title="Cerrar sesión " 
-            onPress={() => {cerrarsesion()}} 
+            onPress={() => {finalizar()}} 
             buttonStyle={styles.btnCloseSession} 
             titleStyle={styles.btnCloseSessionText}/>
          <Toast ref={toastRef} position='center' opacity={0.9} style={{backgroundColor:'#28872A'}}/>

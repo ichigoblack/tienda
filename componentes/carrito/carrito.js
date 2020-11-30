@@ -1,12 +1,11 @@
 import {size} from 'lodash'
 import Modal from '../Modal'
-import Loading from '../loading'
 import CompraModal from './compraModal'
 import {AntDesign} from '@expo/vector-icons'
+import {Image,Button} from 'react-native-elements'
 import {useFocusEffect} from '@react-navigation/native'
-import {Image,Button,Rating} from 'react-native-elements'
+import React,{useState,useEffect,useCallback} from 'react'
 import AsyncStorage from '@react-native-community/async-storage'
-import React,{useRef,useState,useEffect,useCallback} from 'react'
 import {Text,View,FlatList,StyleSheet,TouchableOpacity} from 'react-native'
 import {datos,ObtenerUsuario,verificarLista,obtenerDatosUsuario} from '../../utils/acciones'
 
@@ -25,8 +24,6 @@ export default function Carrito(){
 
     useEffect(()=>{
         (async()=>{
-            //setLoading(true)
-            console.log("useEffect carrito")
             await getMyValue()
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
@@ -43,7 +40,6 @@ export default function Carrito(){
 
     useFocusEffect(
         useCallback(() => {
-        console.log('entre al carrito')
         getMyValue()
             return () => {
                // console.log('Screen was unfocused')
@@ -58,8 +54,6 @@ export default function Carrito(){
         } catch(e) {
           // read error
         }
-        console.log("value",value)
-        console.log('Done',JSON.parse(value))
         setTotal(size(JSON.parse(value)))
         if(size(JSON.parse(value)) >0){
             setListProduct(await verificarLista(JSON.parse(value)))
@@ -143,16 +137,6 @@ function Producto(props) {
             setCount(count+1)
         }
     }
-
-    useEffect(()=>{
-        (async()=>{
-            //setCount(cantidad[posicion])
-            //console.log("posicion",listProduct.indexOf(producto))
-            //aconsole.log("se encontro",filter(listProduct,{id:id}))
-            //console.log("objeto",listProduct[posicion].cantidad)
-
-        })()
-    },[])
 
     return (
         <>
