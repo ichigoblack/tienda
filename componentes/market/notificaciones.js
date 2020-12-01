@@ -1,5 +1,6 @@
 import {size} from 'lodash'
 import {Avatar} from 'react-native-elements'
+import {FontAwesome} from '@expo/vector-icons'
 import moment from 'moment/min/moment-with-locales'
 import React,{useEffect,useState,useCallback} from 'react'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
@@ -50,7 +51,11 @@ export default function Notificaciones() {
                     />
                 </View> 
             ):(
-                <Text>No hay nada</Text>
+                <View style={{ justifyContent: "center",flex:1,alignItems:'center'}}>
+                    <View style={styles.containerProductosInterno}>
+                        <FontAwesome name="bell" size={100} color="#25d366" style={{ margin: 10 }}/>
+                    </View>
+                </View>
             )}
         </View>
     )
@@ -96,19 +101,28 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-  container: {
-    flexDirection: "row",
-    paddingVertical: 20,
-    paddingLeft: 10,
-    paddingRight: 40,
-    borderBottomColor: "#bdbdbd",
-    borderBottomWidth: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-  },
+    container: {
+        flexDirection: "row",
+        paddingVertical: 20,
+        paddingLeft: 10,
+        paddingRight: 40,
+        borderBottomColor: "#bdbdbd",
+        borderBottomWidth: 1,
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    avatar: {
+        width: 50,
+        height: 50,
+        marginRight: 10,
+    },
+    containerProductosInterno: {
+        width:200,
+        height:200,
+        borderWidth: 1,
+        borderRadius: 100,
+        alignItems: 'center',
+        borderColor: "#25d366",
+        justifyContent: "center",
+    },
 })

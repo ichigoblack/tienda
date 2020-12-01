@@ -8,7 +8,7 @@ import Menu,{MenuItem,MenuDivider} from 'react-native-material-menu'
 import {Icon,Badge,Image,Button,Rating} from 'react-native-elements'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
-import {Text,View,FlatList,StatusBar,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
+import {Text,View,FlatList,BackHandler,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
 import {ObtenerUsuario,verificarLista,
         obtenerDatosUsuario,ListarProductos,
         ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
@@ -59,6 +59,15 @@ export default function Market() {
                 console.log("err",err)
              })
         })()
+        const backAction = () => {
+            BackHandler.exitApp()
+            return true
+        }
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+        )
+        return () => backHandler.remove()
     },[])
 
     useFocusEffect(
@@ -253,7 +262,17 @@ export default function Market() {
                     keyExtractor={(item,index)=>index.toString()}
                 />
             ):(
-            <Text>{mensajes}</Text>
+                <View style={{ justifyContent: "center",flex:1,alignItems:'center'}}>
+                    <View style={styles.containerProductosInterno}>
+                        <Icon
+                            size={100}
+                            color="#25d366"
+                            name="store"
+                            style={{ margin: 10 }}
+                            type="FontAwesome5"
+                        />
+                    </View>
+                </View>
             )}
             {renderComponent && (
               <Modal isVisible={showModal} setIsVisible={setShowModal}>
@@ -336,10 +355,23 @@ function BotonCategoria(props) {
     )
 }
 
+const windowWidth = Dimensions.get('window').width
+const windowHeight = Dimensions.get('window').height
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        height:windowHeight,
         backgroundColor: '#fff',
+    },
+    containerProductosInterno: {
+        width:200,
+        height:200,
+        borderWidth: 1,
+        borderRadius: 100,
+        alignItems: 'center',
+        borderColor: "#25d366",
+        justifyContent: "center",
     },
     header: {
         height: "20%",

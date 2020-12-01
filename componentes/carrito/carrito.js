@@ -2,8 +2,8 @@ import {size} from 'lodash'
 import Modal from '../Modal'
 import CompraModal from './compraModal'
 import {AntDesign} from '@expo/vector-icons'
-import {Image,Button} from 'react-native-elements'
 import {useFocusEffect} from '@react-navigation/native'
+import { Icon,Image,Button} from 'react-native-elements'
 import React,{useState,useEffect,useCallback} from 'react'
 import AsyncStorage from '@react-native-community/async-storage'
 import {Text,View,FlatList,StyleSheet,TouchableOpacity} from 'react-native'
@@ -61,7 +61,7 @@ export default function Carrito(){
         }
     }
 
-    llenarCantidad = async (array) => {
+    const llenarCantidad = async (array) => {
         let value = []
         for (let index = 0; index < size(array); index++) {
             value.push(1)
@@ -113,7 +113,17 @@ export default function Carrito(){
                 )}
                 </>
             ):(
-            <Text>No hay nada</Text>
+                <View style={{ alignSelf: "center",flex:1,alignItems:'center',justifyContent:'center' }}>
+                    <View style={styles.containerProductosInterno}>
+                        <Icon
+                            size={100}
+                            color="#25d366"
+                            name="cart-plus"
+                            style={{ margin: 10 }}
+                            type="material-community"
+                        />
+                    </View>
+                </View>
             )}
         </View>
     )
@@ -227,7 +237,15 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingBottom: 5,
         borderColor: "#128c7e",
-    }
+    },
+    containerProductosInterno: {
+        width: 120,
+        height: 120,
+        borderWidth: 1,
+        borderRadius: 60,
+        alignSelf: "center",
+        borderColor: "#25d366",
+    },
 })
 
 

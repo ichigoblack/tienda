@@ -1,4 +1,4 @@
-import {size} from 'lodash'
+import {size,isEmpty} from 'lodash'
 import React,{useState,useEffect} from 'react'
 //import {enviarWhatsapp} from "../../Utils/Utils"
 import {Button,Rating} from 'react-native-elements'
@@ -13,7 +13,7 @@ const product = 'ListaProducto'
 export default function Detalle(props) {
 
     const {usuario,producto,setTotal,showModal,listProduct,setShowModal} = props
-    const {tipo} = usuario
+    const {tipo,telefono} = usuario
     const {id,precio,rating,titulo,imagenes,descripcion} = producto.item
 
     const [activeslide, setactiveslide] = useState(0)
@@ -27,37 +27,47 @@ export default function Detalle(props) {
     const product = 'producto'
 
     const saveArticle = async (key, value) =>{
-        if(size(listProduct)>0){          
-            await verificarArray(listProduct,value)
-            .then(async(result)=>{
-                 if(result){
-                    Alert.alert(
-                        "","El producto ya se encuentra en el carrito",
-                        [{
-                            style: "cancel",
-                            text: "Aceptar",
-                            onPress: () => setShowModal(false),
-                        }]
-                    )
-                }else{
-                    listProduct.push(value)
-                    setTotal(size(listProduct))
-                    await AsyncStorage.setItem(key,JSON.stringify(listProduct)).then(() => {
-                        setShowModal(false)
-                    })
-                }
-            })
-            .catch((result)=>{
-                console.log(result)
-                setShowModal(false)
-            })
+        if(isEmpty(telefono)){
+            Alert.alert(
+                "Alerta","Primero debe registrar un numero de telefono para realizar operaciones",
+                [{
+                    style: "cancel",
+                    text: "Aceptar",
+                }]
+            )
         }else{
-            setTotal(1)
-            listProduct.push(value)
-            await AsyncStorage.setItem(key,JSON.stringify(listProduct)).then(() => {
-                console.log('Contacts updated.')
-                setShowModal(false)
-            })
+            if(size(listProduct)>0){          
+                await verificarArray(listProduct,value)
+                .then(async(result)=>{
+                     if(result){
+                        Alert.alert(
+                            "","El producto ya se encuentra en el carrito",
+                            [{
+                                style: "cancel",
+                                text: "Aceptar",
+                                onPress: () => setShowModal(false),
+                            }]
+                        )
+                    }else{
+                        listProduct.push(value)
+                        setTotal(size(listProduct))
+                        await AsyncStorage.setItem(key,JSON.stringify(listProduct)).then(() => {
+                            setShowModal(false)
+                        })
+                    }
+                })
+                .catch((result)=>{
+                    console.log(result)
+                    setShowModal(false)
+                })
+            }else{
+                setTotal(1)
+                listProduct.push(value)
+                await AsyncStorage.setItem(key,JSON.stringify(listProduct)).then(() => {
+                    console.log('Contacts updated.')
+                    setShowModal(false)
+                })
+            }
         }
      }
 

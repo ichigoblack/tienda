@@ -1,17 +1,28 @@
+
+import {isEmpty} from 'lodash'
 import {Icon} from 'react-native-elements'
 import React, {useState,useEffect,useCallback} from 'react'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {Alert,Text,View,Image,FlatList,StyleSheet} from 'react-native'
-import {eliminarImagenes,eliminarProducto,actualizarRegistro,ListarMisProductos} from '../../utils/acciones'
+import {ObtenerUsuario,obtenerDatosUsuario,eliminarImagenes,eliminarProducto,actualizarRegistro,ListarMisProductos} from '../../utils/acciones'
 
 export default function Mitienda(){
 
+    const usuario = ObtenerUsuario()
     const navigation = useNavigation()
+    const [inf, setInf] = useState(null)
     const [productos, setproductos] = useState({})
     
     useEffect(()=>{
         (async()=>{
             setproductos(await ListarMisProductos())
+            await obtenerDatosUsuario(usuario.uid)
+            .then(async(result) => {
+                setInf(result)
+             })
+             .catch((err) => {
+                console.log("err",err)
+             })
         })()
     },[])
 
@@ -23,6 +34,19 @@ export default function Mitienda(){
         }, [])
     )
 
+    const agregar =()=>{
+        if(isEmpty(inf.telefono)){
+            Alert.alert(
+                "Alerta","Primero debe registrar un numero de telefono para realizar operaciones",
+                [{
+                    style: "cancel",
+                    text: "Aceptar",
+                }]
+            )
+        }else{
+            navigation.navigate("add-product")
+        }
+    }
     return(
         <View style={styles.container}>
             {productos.length > 0 ? (
@@ -55,7 +79,7 @@ export default function Mitienda(){
                 color="#128c7e" 
                 type="material-community" 
                 containerStyle={styles.btnContainer}
-                onPress={()=>{navigation.navigate("add-product")}} />
+                onPress={()=>{agregar()}} />
         </View>
     )
 }

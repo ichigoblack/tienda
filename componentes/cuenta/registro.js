@@ -1,8 +1,7 @@
 import React,{useRef} from "react"
+import RegistroForm from "./RegistroForm"
 import Toast from "react-native-easy-toast"
-import {Text,View,Image,StatusBar,StyleSheet} from "react-native"
-import RegistroForm from "./RegistroForm";  
-//<StatusBar backgroundColor="#128C73" />
+import {Text,View,Image,Dimensions,StyleSheet} from "react-native"
 
 export default function Registro() {
 
@@ -18,11 +17,14 @@ export default function Registro() {
     </View>
   )
 }
+const windowWidth = Dimensions.get('window').width
+const windowHeight = Dimensions.get('window').height
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop:30,
+        height:windowHeight,
         backgroundColor: "#128C73",
     },
     imglogo: {
