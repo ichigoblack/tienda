@@ -3,11 +3,11 @@ import Modal from '../Modal'
 import CompraModal from './compraModal'
 import {AntDesign} from '@expo/vector-icons'
 import {useFocusEffect} from '@react-navigation/native'
-import { Icon,Image,Button} from 'react-native-elements'
+import {Icon,Image,Button} from 'react-native-elements'
 import React,{useState,useEffect,useCallback} from 'react'
 import AsyncStorage from '@react-native-community/async-storage'
-import {Text,View,FlatList,StyleSheet,TouchableOpacity} from 'react-native'
-import {datos,ObtenerUsuario,verificarLista,obtenerDatosUsuario} from '../../utils/acciones'
+import {Text,View,Alert,FlatList,StyleSheet,TouchableOpacity} from 'react-native'
+import {datos,ObtenerUsuario,verificarLista,obtenerDatosUsuario,eliminarProductoLista} from '../../utils/acciones'
 
 export default function Carrito(){
 
@@ -94,6 +94,7 @@ export default function Carrito(){
                             cantidad={cantidad}
                             producto={producto}
                             listProduct={listProduct}
+                            setListProduct={setListProduct}
                         />
                     )}
                     keyExtractor={(item,index)=>index.toString()}
@@ -130,7 +131,7 @@ export default function Carrito(){
 }
 //<Loading isVisible={loading} text={loadingText}/>
 function Producto(props) {
-    const {cantidad,producto} = props
+    const {cantidad,producto,listProduct,setListProduct} = props
     const {id,precio,posicion,titulo,imagenes} = producto.item
     const [count,setCount] = useState(1)
     
@@ -153,6 +154,30 @@ function Producto(props) {
             <View style={styles.card}>
                 <Image source={{ uri: imagenes[0] }} style={styles.imgproducto} />
                 <View style={styles.infobox}>
+                    <View style={{width:'100%',alignItems:'flex-end'}}>
+                        <Icon
+                            type="material-community"
+                            name="trash-can-outline"
+                            color="#128c7e"
+                            onPress={async () => {
+                                Alert.alert(
+                                    "Eliminar Producto",
+                                    "¿Estás seguro que deseas eliminar el producto",
+                                    [{
+                                        style: "default",
+                                        text: "Confirmar",
+                                        onPress: async () => {
+                                            console.log("id",id)
+                                            setListProduct(await eliminarProductoLista(listProduct, id))
+                                        },
+                                    },{
+                                        style: "default",
+                                        text: "Salir",
+                                    }]
+                                )
+                            }}
+                        />
+                    </View>
                     <Text style={styles.titulo}>{titulo}</Text>
                     <Text style={styles.precio}>${precio}</Text>
                     <View style={styles.botones}>

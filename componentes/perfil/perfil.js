@@ -138,8 +138,8 @@ export default function Perfil () {
 
    const finalizar=()=>{
       Alert.alert(
-         "Actualización completa",
-         "El producto se ha actualizado correctamente",
+         "Cerrar sesion",
+         "estas seguro de salir?",
          [{
             style: "cancel",
             text: "Cancelar",

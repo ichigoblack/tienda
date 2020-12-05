@@ -73,6 +73,8 @@ export default function Market() {
     useFocusEffect(
         useCallback(() => {
             async()=>{
+            getMyValue()
+            setproductlist(await ListarProductos())
             await obtenerDatosUsuario(usuario.uid)
             .then(async(result) => {
                 setInf(result)

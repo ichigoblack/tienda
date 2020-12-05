@@ -9,6 +9,7 @@ import Constants from 'expo-constants'
 import {convertirFicheroBlob} from './utils'
 import * as Permissions from 'expo-permissions'
 import * as Notifications from 'expo-notifications'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const db = firebase.firestore(firebaseapp)
 const fireSQL = new FireSQL(firebase.firestore(), { includeId: "id" })
@@ -374,6 +375,20 @@ export const ListarMisProductos = async () => {
     });
 
   return productos;
+}
+
+export const eliminarProductoLista = async (lista,id) => {
+  const product = 'producto'
+  let productos = []
+  await Promise.all(
+    map(lista, async (item) => {
+      if(!(item.id === id)){
+        productos.push(item)
+      }
+    })
+  )
+  await AsyncStorage.setItem(product,JSON.stringify(productos))
+  return productos
 }
 
 export const numberOrden = async () => {
