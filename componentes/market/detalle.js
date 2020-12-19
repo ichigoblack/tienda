@@ -27,7 +27,7 @@ export default function Detalle(props) {
     const product = 'producto'
 
     const saveArticle = async (key, value) =>{
-        if(isEmpty(telefono)){
+       /* if(isEmpty(telefono)){
             Alert.alert(
                 "Alerta","Primero debe registrar un numero de telefono para realizar operaciones",
                 [{
@@ -35,7 +35,7 @@ export default function Detalle(props) {
                     text: "Aceptar",
                 }]
             )
-        }else{
+        }else{*/
             if(size(listProduct)>0){          
                 await verificarArray(listProduct,value)
                 .then(async(result)=>{
@@ -68,7 +68,7 @@ export default function Detalle(props) {
                     setShowModal(false)
                 })
             }
-        }
+       // }
      }
 
     const clearStorage = async (key) => {

@@ -6,6 +6,7 @@ import {validaremail} from '../../utils/utils'
 import {useNavigation} from '@react-navigation/native'
 import {Icon,Input,Button,Divider} from 'react-native-elements'
 import {View,StyleSheet,Text,TouchableOpacity} from 'react-native'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 export default function LoginForm(props) {
     
@@ -77,49 +78,54 @@ export default function LoginForm(props) {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.barra}/>
-            <Input
-                value={email}
-                placeholder='Correo' 
-                containerStyle={styles.input}
-                onChangeText={(text) => {setEmail(text)}}
-                rightIcon={{
-                    type: "material-community",
-                    name: "at",
-                    color: "#128c7e",
-                }}
-                leftIcon={{
-                    type: "material-community",
-                    name: "account-circle-outline",
-                    color: "#128c7e",
-                }}
-            />
-            <Input
-                value={password}
-                secureTextEntry={show}
-                placeholder='Contraseña' 
-                containerStyle={styles.input}
-                onChangeText={(text) => {setPassword(text)}}
-                leftIcon={{
-                    type: "material-community",
-                    name: "security",
-                    color: "#128c7e",
-                }}
-                rightIcon={{
-                    type: "material-community",
-                    name: show ? "eye-outline" : "eye-off-outline",
-                    color: "#128c7e",
-                    onPress: () => setshow(!show),
-                }}
-            />
-            <Button title='Iniciar sesión' containerStyle={styles.btnLogin} buttonStyle={{backgroundColor:'#25D366'}} onPress={() => iniciarsesion()}/>
-            <CreateAccount/>
-            <Divider style={styles.divider}/>
-            <Text style={styles.txto}>O</Text>
-            <BotonesRedes/>
-            <Loading isVisible={loading} text="Iniciando Sesión"/>
-        </View>
+        <KeyboardAwareScrollView style={{flex: 1,
+            margin: 5,
+            padding: 5,
+            elevation: 3,
+            borderRadius: 50,
+            backgroundColor: "#fff",}}>
+            <View style={styles.container}>
+                <View style={styles.barra}/>
+                <Input
+                    value={email}
+                    placeholder='Correo' 
+                    containerStyle={styles.input}
+                    onChangeText={(text) => {setEmail(text)}}
+                    rightIcon={{
+                        type: "material-community",
+                        name: "at",
+                        color: "#128c7e",
+                    }}
+                    leftIcon={{
+                        type: "material-community",
+                        name: "account-circle-outline",
+                        color: "#128c7e",
+                    }}
+                />
+                <Input
+                    value={password}
+                    secureTextEntry={show}
+                    placeholder='Contraseña' 
+                    containerStyle={styles.input}
+                    onChangeText={(text) => {setPassword(text)}}
+                    leftIcon={{
+                        type: "material-community",
+                        name: "security",
+                        color: "#128c7e",
+                    }}
+                    rightIcon={{
+                        type: "material-community",
+                        name: show ? "eye-outline" : "eye-off-outline",
+                        color: "#128c7e",
+                        onPress: () => setshow(!show),
+                    }}
+                />
+                <Button title='Iniciar sesión' containerStyle={styles.btnLogin} buttonStyle={{backgroundColor:'#25D366'}} onPress={() => iniciarsesion()}/>
+                <CreateAccount/>
+                <Divider style={styles.divider}/>
+                <Loading isVisible={loading} text="Iniciando Sesión"/>
+            </View>
+        </KeyboardAwareScrollView>
     );
 }
 
@@ -132,9 +138,9 @@ const styles = StyleSheet.create({
         marginTop:20,
         paddingTop:20,
         alignItems:'center',
-        borderTopLeftRadius:50,
-        borderTopRightRadius:50,
-        backgroundColor:'#F5F6F8',
+        //borderTopLeftRadius:50,
+        //borderTopRightRadius:50,
+        //backgroundColor:'#F5F6F8',
     },
     barra:{
         width:100,
@@ -183,3 +189,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#25d366",
     },
 })
+/*
+
+                <Text style={styles.txto}>O</Text>
+                <BotonesRedes/> */

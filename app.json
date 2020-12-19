@@ -33,6 +33,7 @@
         "ACCESS_FINE_LOCATION"
       ],
       "useNextNotificationsApi": true,
+      "package": "com.deflor40.tienda"
     },
     "web": {
       "favicon": "./assets/favicon.png"

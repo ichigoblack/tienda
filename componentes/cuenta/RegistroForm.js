@@ -7,6 +7,7 @@ import {validaremail} from '../../utils/utils'
 import {Input,Button} from 'react-native-elements'
 import {useNavigation} from '@react-navigation/native'
 import {addRegistroEspecifico} from '../../utils/acciones'
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 export default function RegistroForm(props) {
 
@@ -57,7 +58,13 @@ export default function RegistroForm(props) {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={{flex: 1,
+      margin: 5,
+      padding: 5,
+      elevation: 3,
+      borderRadius: 50,
+      backgroundColor: "#fff",}}>
+      <View style={styles.container}>
       <View
         style={{
           borderBottomColor: "#25D366",
@@ -65,82 +72,83 @@ export default function RegistroForm(props) {
           width: 100,
         }}
       />
-      <Input
-        placeholder="Correo"
-        containerStyle={styles.input}
-        rightIcon={{
-          type: "material-community",
-          name: "at",
-          color: "#128c7e",
-        }}
-        leftIcon={{
-          type: "material-community",
-          name: "account-circle-outline",
-          color: "#128c7e",
-        }}
-        onChangeText={(text) => {setemail(text)}}
-        value={email}
-      />
-      <Input
-        placeholder="Contraseña"
-        containerStyle={styles.input}
-        leftIcon={{
-          type: "material-community",
-          name: "security",
-          color: "#128c7e",
-        }}
-        rightIcon={{
-          type: "material-community",
-          name: show ? "eye-off-outline" : "eye-outline",
-          color: "#128c7e",
-          onPress: () => setshow(!show),
-        }}
-        onChangeText={(text) => {setpassword(text)}}
-        secureTextEntry={!show}
-        value={password}
-      />
-      <Input
-        placeholder="Repetir Contraseña"
-        containerStyle={styles.input}
-        leftIcon={{
-          type: "material-community",
-          name: "security",
-          color: "#128c7e",
-        }}
-        rightIcon={{
-          type: "material-community",
-          name: showC ? "eye-off-outline" : "eye-outline",
-          color: "#128c7e",
-          onPress: () => setshowC(!showC),
-        }}
-        onChangeText={(text) => {setrepetirpassword(text)}}
-        secureTextEntry={!showC}
-        value={repetirpassword}
-      />
-      <Button
-        title="CREAR CUENTA"
-        containerStyle={styles.btnentrar}
-        buttonStyle={{ backgroundColor: "#25d366" }}
-        onPress={() => crearcuenta()}
-      />
-      <Button
-        title="INICIAR SESIÓN"
-        containerStyle={styles.btnentrar}
-        buttonStyle={{ backgroundColor: "#128C7E" }}
-        onPress={() => navigation.goBack()}
-      />
+        <Input
+          placeholder="Correo"
+          containerStyle={styles.input}
+          rightIcon={{
+            type: "material-community",
+            name: "at",
+            color: "#128c7e",
+          }}
+          leftIcon={{
+            type: "material-community",
+            name: "account-circle-outline",
+            color: "#128c7e",
+          }}
+          onChangeText={(text) => {setemail(text)}}
+          value={email}
+        />
+        <Input
+          placeholder="Contraseña"
+          containerStyle={styles.input}
+          leftIcon={{
+            type: "material-community",
+            name: "security",
+            color: "#128c7e",
+          }}
+          rightIcon={{
+            type: "material-community",
+            name: show ? "eye-off-outline" : "eye-outline",
+            color: "#128c7e",
+            onPress: () => setshow(!show),
+          }}
+          onChangeText={(text) => {setpassword(text)}}
+          secureTextEntry={!show}
+          value={password}
+        />
+        <Input
+          placeholder="Repetir Contraseña"
+          containerStyle={styles.input}
+          leftIcon={{
+            type: "material-community",
+            name: "security",
+            color: "#128c7e",
+          }}
+          rightIcon={{
+            type: "material-community",
+            name: showC ? "eye-off-outline" : "eye-outline",
+            color: "#128c7e",
+            onPress: () => setshowC(!showC),
+          }}
+          onChangeText={(text) => {setrepetirpassword(text)}}
+          secureTextEntry={!showC}
+          value={repetirpassword}
+        />
+        <Button
+          title="CREAR CUENTA"
+          containerStyle={styles.btnentrar}
+          buttonStyle={{ backgroundColor: "#25d366" }}
+          onPress={() => crearcuenta()}
+        />
+        <Button
+          title="INICIAR SESIÓN"
+          containerStyle={styles.btnentrar}
+          buttonStyle={{ backgroundColor: "#128C7E" }}
+          onPress={() => navigation.goBack()}
+        />
+      </View>
       <Loading isVisible={loading} text="Favor Espere" />
-    </View>
+    </KeyboardAwareScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F5F6F8",
+    //backgroundColor: "#F5F6F8",
     flex: 1,
     marginTop: 20,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
+    //borderTopLeftRadius: 50,
+    //borderTopRightRadius: 50,
     alignItems: "center",
     paddingTop: 20,
   },

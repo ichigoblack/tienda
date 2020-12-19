@@ -383,7 +383,7 @@ export const eliminarProductoLista = async (lista,id) => {
   await Promise.all(
     map(lista, async (item) => {
       if(!(item.id === id)){
-        productos.push(item)
+        productos.push(id)
       }
     })
   )

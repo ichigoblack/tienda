@@ -21,7 +21,7 @@ export default function ChangePhoneForm(props) {
     const [phoneNumber, setphoneNumber] = useState("")
     const [textA, setTextA] = useState("Agregar Telefono")
     const [textB, setTextB] = useState("Cambiar Telefono")
-    const [callingCode, setcallingcode] = useState(datos.codigo)
+    const [callingCode, setcallingcode] = useState("593")
     const [isLoading, setIsLoading] = useState(datos.telefonoAuth)
 
     const onSubmit = () => {
@@ -49,6 +49,7 @@ export default function ChangePhoneForm(props) {
         const ce = callingCode
         const ne = phone
         const numero = `+${ce}${ne}` 
+        console.log("numero",numero)
         if(datos.telefonoAuth){
             setCodigoVal(true)
             enviarCodigo(numero)
@@ -100,6 +101,7 @@ export default function ChangePhoneForm(props) {
     }
 
     const enviarCodigo = async (numero) => {
+        console.log("numero",numero)
         const verificationid = await enviarconfirmacionphone(numero,recaptchaVerifier)
         if(!isEmpty(verificationid)){
             setphoneNumber(verificationid)

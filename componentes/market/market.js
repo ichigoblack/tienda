@@ -9,9 +9,7 @@ import {Icon,Badge,Image,Button,Rating} from 'react-native-elements'
 import {useNavigation,useFocusEffect} from '@react-navigation/native'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import {Text,View,FlatList,BackHandler,Dimensions,StyleSheet,TouchableOpacity,} from 'react-native'
-import {ObtenerUsuario,verificarLista,
-        obtenerDatosUsuario,ListarProductos,
-        ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
+import {ObtenerUsuario,obtenerDatosUsuario,ListarProductos,ListarNotificaciones,listarProductosxCategoria} from '../../utils/acciones'
 
 export default function Market() {
     
@@ -40,6 +38,7 @@ export default function Market() {
 
     useEffect(()=>{
         (async()=>{
+            console.log("useEffect")
             getMyValue()
             setproductlist(await ListarProductos())
             await obtenerDatosUsuario(usuario.uid)
@@ -72,30 +71,26 @@ export default function Market() {
 
     useFocusEffect(
         useCallback(() => {
-            async()=>{
-            getMyValue()
-            setproductlist(await ListarProductos())
-            await obtenerDatosUsuario(usuario.uid)
-            .then(async(result) => {
-                setInf(result)
-                if(result.rol === "admin"){
-                    setNot(1)
-                    const consulta = await ListarNotificaciones()
-                    if(consulta.statusresponse){
-                        setnotificaciones(consulta.total)
+            (async () => {
+                console.log("useFocusEffect")
+                setproductlist(await ListarProductos())
+                await obtenerDatosUsuario(usuario.uid)
+                .then(async(result) => {
+                    setInf(result)
+                    if(result.rol === "admin"){
+                        setNot(1)
+                        const consulta = await ListarNotificaciones()
+                        if(consulta.statusresponse){
+                            setnotificaciones(consulta.total)
+                        }
+                    }else{
+                        setBot(1)
                     }
-                }else{
-                    setBot(1)
-                }
-            })
-            .catch((err) => {
-                console.log("err",err)
-            })
-            getMyValue()
-        } 
-            return () => {
-                //console.log('Screen was unfocused')
-            }
+                })
+                .catch((err) => {
+                    console.log("err",err)
+                })
+            })()
         }, [])
     )
 
