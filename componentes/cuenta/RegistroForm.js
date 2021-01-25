@@ -2,11 +2,12 @@ import Loading from '../loading'
 import {isEmpty,size} from 'lodash'
 import * as firebase from 'firebase'
 import React,{useState} from 'react'
-import {View,StyleSheet} from 'react-native'
+import * as Facebook from 'expo-facebook'
 import {validaremail} from '../../utils/utils'
-import {Input,Button} from 'react-native-elements'
 import {useNavigation} from '@react-navigation/native'
 import {addRegistroEspecifico} from '../../utils/acciones'
+import {Icon,Input,Button,Divider} from 'react-native-elements'
+import {Text,View,StyleSheet,TouchableOpacity} from 'react-native'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 export default function RegistroForm(props) {
@@ -39,11 +40,11 @@ export default function RegistroForm(props) {
             foto:"",
             token:"",
             codigo:"",
-            tipo:false,
+            rol:"User",
             email:email,
             telefono:"",
             direccion:"",
-            rol:"cliente",
+            tipo:"correo",
             nombre:"usuario",
             telefonoAuth:false,
           }
@@ -57,13 +58,88 @@ export default function RegistroForm(props) {
     }
   }
 
+  async function logIn() {
+    try {
+      await Facebook.initializeAsync({
+        appId: '3403582586374104',
+      });
+      const {
+        type,
+        token,
+        expirationDate,
+        permissions,
+        declinedPermissions,
+      } = await Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile'],
+      });
+      if (type === 'success') {
+        setloading(true)
+        const credential = firebase.auth.FacebookAuthProvider.credential(token);
+        //console.log("credential",credential)
+        firebase.auth().signInWithCredential(credential)
+        .then(async(response) => {
+            console.log(response.user)
+            let usuario = {
+              foto:response.user.photoURL,
+              token:"",
+              codigo:"",
+              rol:"User",
+              email:response.user.email,
+              telefono:response.user.phoneNumber,
+              direccion:"",
+              tipo:"facebook",   
+              nombre:response.user.displayName,  
+              telefonoAuth:false,
+            }
+            const registro = await addRegistroEspecifico("users", response.user.uid, usuario)
+            setloading(false)
+        })
+        .catch(error => {console.log(error)})
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      alert(`Facebook Login Error: ${message}`);
+    }
+  }
+  function BotonesRedes() {
+    return(
+        <View style={styles.btnRedes}>
+            <TouchableOpacity style={styles.btnloginsocial}>
+                <Icon
+                    size={24}
+                    type="material-community"
+                    name="google"
+                    color="#fff"
+                    backgroundColor="transparent"
+                    //onPress={() => signInAsync()}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnloginsocial}>
+                <Icon
+                    size={24}
+                    type="material-community"
+                    name="facebook"
+                    color="#fff"
+                    onPress={() => logIn()}
+                    backgroundColor="transparent"
+                />
+            </TouchableOpacity>
+        </View>
+    )
+  }
+
   return (
-    <KeyboardAwareScrollView style={{flex: 1,
-      margin: 5,
-      padding: 5,
-      elevation: 3,
-      borderRadius: 50,
-      backgroundColor: "#fff",}}>
+    <KeyboardAwareScrollView 
+      style={{
+        flex: 1,
+        margin: 5,
+        padding: 5,
+        elevation: 3,
+        borderRadius: 50,
+        backgroundColor: "#fff",
+      }}
+    >
       <View style={styles.container}>
       <View
         style={{
@@ -129,7 +205,11 @@ export default function RegistroForm(props) {
           containerStyle={styles.btnentrar}
           buttonStyle={{ backgroundColor: "#25d366" }}
           onPress={() => crearcuenta()}
-        />
+        />   
+        <Divider style={styles.divider}/>
+        <Text style={styles.txto}>O</Text>
+        <BotonesRedes/>
+        <Divider style={styles.divider}/>
         <Button
           title="INICIAR SESIÓN"
           containerStyle={styles.btnentrar}
@@ -160,5 +240,28 @@ const styles = StyleSheet.create({
   btnentrar: {
     width: "90%",
     marginTop: 20,
-  }
+  },
+  divider:{
+      height:1,
+      width:'90%',
+      marginTop:20,
+      backgroundColor:'#128C7E'
+  },
+  txto: {
+      fontSize: 20,
+      marginTop: 20,
+      color: "#128c7e",
+      fontWeight: "bold",
+  },
+  btnRedes: {
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+  btnloginsocial: {
+      borderRadius: 5,
+      paddingVertical: 10,
+      paddingHorizontal: 40,
+      backgroundColor: "#25d366",
+  },
 })

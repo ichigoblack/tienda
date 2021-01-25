@@ -1,11 +1,13 @@
 import {isEmpty} from 'lodash'
 import Loading from '../loading'
 import React,{useState} from 'react'
+import * as Facebook from 'expo-facebook'
 import firebase from '../../utils/firebas'
 import {validaremail} from '../../utils/utils'
 import {useNavigation} from '@react-navigation/native'
 import {Icon,Input,Button,Divider} from 'react-native-elements'
-import {View,StyleSheet,Text,TouchableOpacity} from 'react-native'
+import {View,Alert,StyleSheet,Text,TouchableOpacity} from 'react-native'
+import {obtenerDatosUsuario,addRegistroEspecifico} from '../../utils/acciones'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 export default function LoginForm(props) {
@@ -16,6 +18,57 @@ export default function LoginForm(props) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setloading] = useState(false)
+
+    
+    async function logIn() {
+        try {
+          await Facebook.initializeAsync({
+            appId: '3403582586374104',
+          });
+          const {
+            type,
+            token,
+            expirationDate,
+            permissions,
+            declinedPermissions,
+          } = await Facebook.logInWithReadPermissionsAsync({
+            permissions: ['public_profile'],
+          });
+          if (type === 'success') {
+            // Get the user's name using Facebook's Graph API
+            //const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+            //Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+            const credential = firebase.auth.FacebookAuthProvider.credential(token);
+            //console.log("credential",credential)
+            firebase.auth().signInWithCredential(credential)
+            .then(async(response) => {
+                //console.log(response.user)
+                const usu = await obtenerDatosUsuario(response.user.uid)
+                console.log("usu",usu)
+                if(isEmpty(usu)){
+                    let usuario = {
+                        foto:response.user.photoURL,
+                        token:"",
+                        codigo:"",
+                        rol:"User",
+                        email:response.user.email,
+                        telefono:response.user.phoneNumber,
+                        direccion:"",
+                        tipo:"facebook",   
+                        nombre:response.user.displayName,  
+                        telefonoAuth:false,
+                    }
+                    const registro = await addRegistroEspecifico("users", response.user.uid, usuario)
+                }
+            })
+            .catch(error => {console.log(error)})
+          } else {
+            // type === 'cancel'
+          }
+        } catch ({ message }) {
+          alert(`Facebook Login Error: ${message}`);
+        }
+    }
 
     const iniciarsesion = () => {
         if(isEmpty(email) || isEmpty(password)) {
@@ -67,9 +120,10 @@ export default function LoginForm(props) {
                 <TouchableOpacity style={styles.btnloginsocial}>
                     <Icon
                         size={24}
-                        type="material-community"// onPress={() => logIn()}
+                        type="material-community"//
                         name="facebook"
                         color="#fff"
+                        onPress={() => logIn()}
                         backgroundColor="transparent"
                     />
                 </TouchableOpacity>
@@ -123,6 +177,8 @@ export default function LoginForm(props) {
                 <Button title='Iniciar sesión' containerStyle={styles.btnLogin} buttonStyle={{backgroundColor:'#25D366'}} onPress={() => iniciarsesion()}/>
                 <CreateAccount/>
                 <Divider style={styles.divider}/>
+                <Text style={styles.txto}>O</Text>
+                <BotonesRedes/>
                 <Loading isVisible={loading} text="Iniciando Sesión"/>
             </View>
         </KeyboardAwareScrollView>
@@ -189,7 +245,3 @@ const styles = StyleSheet.create({
         backgroundColor: "#25d366",
     },
 })
-/*
-
-                <Text style={styles.txto}>O</Text>
-                <BotonesRedes/> */

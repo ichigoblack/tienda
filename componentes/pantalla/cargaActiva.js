@@ -15,7 +15,7 @@ export default function CargaActiva({navigation}) {
         (async () => {
             await obtenerDatosUsuario(usuario.uid)
             .then((result) => {
-                if(result.tipo){
+                if(result.rol){
                     navigation.navigate('Admin')
                 }else{
                     navigation.navigate('User')
